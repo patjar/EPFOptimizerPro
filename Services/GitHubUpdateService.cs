@@ -9,7 +9,7 @@ namespace EPFOptimizerPro.Services;
 public sealed class GitHubUpdateService
 {
     private const string Owner = "patjar";
-    private const string Repository = "winOptimia";
+    private const string Repository = "EPFOptimizerPro";
     private readonly HttpClient _client = new();
     private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
