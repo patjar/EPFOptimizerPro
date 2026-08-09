@@ -13,9 +13,9 @@ $BuildDir = Join-Path $ProjectRoot "installer-build"
 $OutputDir = Join-Path $ProjectRoot "dist"
 $ProductName = "EPF Optimizer Pro"
 $Manufacturer = "EPF"
-$Version = "3.9.35.0"
+$Version = "3.9.36.0"
 $UpgradeCode = "0db39f56-f090-4e32-9263-8c78fb1b49f4"
-$MsiFile = Join-Path $OutputDir "EPFOptimizerPro-Setup-v3.9.35.msi"
+$MsiFile = Join-Path $OutputDir "EPFOptimizerPro-Setup-v3.9.36.msi"
 $WxsFile = Join-Path $BuildDir "EPFOptimizerPro.wxs"
 $SignTool = "C:\Program Files (x86)\Windows Kits\10\Tools\bin\i386\signtool.exe"
 $CertFile = "C:\Certificats\RADIUSServerCertificate.p12"
@@ -156,3 +156,4 @@ Write-Host ""
 Write-Host "[OK] MSI built, signed and verified." -ForegroundColor Green
 Write-Host $MsiFile -ForegroundColor Green
 Write-Host ""
+
