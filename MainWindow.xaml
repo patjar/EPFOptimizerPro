@@ -68,6 +68,11 @@
             <Setter Property="Padding" Value="10"/>
         </Style>
     </Window.Resources>
+    <ScrollViewer x:Name="MainRootScrollViewer"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  CanContentScroll="False"
+                  PanningMode="VerticalOnly">
 
     <Grid Background="{StaticResource PageGradient}" Margin="22">
         <Grid.RowDefinitions>
@@ -312,51 +317,6 @@
             </Border>
         </Grid>
     </Grid>
+    </ScrollViewer>
 </Window>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
