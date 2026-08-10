@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net10.0-windows</TargetFramework>
@@ -7,10 +7,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>EPFOptimizerPro</AssemblyName>
     <RootNamespace>EPFOptimizerPro</RootNamespace>
-    <Version>3.9.36</Version>
-    <AssemblyVersion>3.9.36.0</AssemblyVersion>
-    <FileVersion>3.9.36.0</FileVersion>
-    <InformationalVersion>3.9.36-version-only-msi-update-test</InformationalVersion>
+    <Version>3.9.37</Version>
+    <AssemblyVersion>3.9.37.0</AssemblyVersion>
+    <FileVersion>3.9.37.0</FileVersion>
+    <InformationalVersion>3.9.37-version-only-msi-update-test</InformationalVersion>
     <Company>EPF Normandie</Company>
     <Product>EPF Optimizer Pro</Product>
     <Authors>EPF Normandie - Patrick JARDIN</Authors>
