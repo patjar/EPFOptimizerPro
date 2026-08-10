@@ -90,7 +90,7 @@
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <TextBlock Text="EPF Optimizer Pro" FontSize="15" Foreground="{StaticResource Sky}" FontWeight="SemiBold"/>
-                    <TextBlock Text="Tableau de bord EPF Optimizer Pro v3.9.36" FontSize="34" FontWeight="Bold" Margin="0,2,0,4"/>
+                    <TextBlock Text="Tableau de bord" FontSize="34" FontWeight="Bold" Margin="0,2,0,4"/>
                     <TextBlock Text="Vue synthétique : état du poste, diagnostics, IA locale et actions rapides." Foreground="{StaticResource TextMuted}" FontSize="12"/>
                 </StackPanel>
                 <Grid Grid.Column="1">
