@@ -1,4 +1,4 @@
-﻿$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 
 # Build MSI EPF Optimizer Pro
 # Preconditions:
@@ -13,9 +13,9 @@ $BuildDir = Join-Path $ProjectRoot "installer-build"
 $OutputDir = Join-Path $ProjectRoot "dist"
 $ProductName = "EPF Optimizer Pro"
 $Manufacturer = "EPF"
-$Version = "3.9.36.0"
+$Version = "3.9.37.0"
 $UpgradeCode = "0db39f56-f090-4e32-9263-8c78fb1b49f4"
-$MsiFile = Join-Path $OutputDir "EPFOptimizerPro-Setup-v3.9.36.msi"
+$MsiFile = Join-Path $OutputDir "EPFOptimizerPro-Setup-v3.9.37.msi"
 $WxsFile = Join-Path $BuildDir "EPFOptimizerPro.wxs"
 $SignTool = "C:\Program Files (x86)\Windows Kits\10\Tools\bin\i386\signtool.exe"
 $CertFile = "C:\Certificats\RADIUSServerCertificate.p12"
