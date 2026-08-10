@@ -537,13 +537,27 @@ public partial class MainWindow : Window
     }
 
 
-    private void BtnOpenUpdateRelease_Click(object sender, RoutedEventArgs e)
-    {
-        if (!string.IsNullOrWhiteSpace(_lastUpdateCheck?.ReleaseUrl))
+            private void BtnOpenUpdateRelease_Click(object sender, RoutedEventArgs e)
         {
-            Process.Start(new ProcessStartInfo(_lastUpdateCheck.ReleaseUrl) { UseShellExecute = true });
+            try
+            {
+                var url = "https://github.com/patjar/EPFOptimizerPro/releases/latest";
+
+                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+                {
+                    FileName = url,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Impossible d'ouvrir la page GitHub Release : " + ex.Message,
+                    "EPF Optimizer Pro",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+            }
         }
-    }
 
     private void BtnExit_Click(object sender, RoutedEventArgs e)
     {
@@ -667,6 +681,7 @@ public partial class MainWindow : Window
         }
     }
 }
+
 
 
 
