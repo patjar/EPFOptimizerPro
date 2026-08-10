@@ -86,18 +86,18 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="520"/>
+                    <ColumnDefinition Width="390"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel>
                     <TextBlock Text="EPF Optimizer Pro" FontSize="15" Foreground="{StaticResource Sky}" FontWeight="SemiBold"/>
                     <TextBlock Text="Tableau de bord" FontSize="34" FontWeight="Bold" Margin="0,2,0,4"/>
                     <TextBlock Text="Vue synthétique : état du poste, diagnostics, IA locale et actions rapides." Foreground="{StaticResource TextMuted}" FontSize="12"/>
                 </StackPanel>
-                <Grid Grid.Column="1">
-                    <Grid.ColumnDefinitions><ColumnDefinition Width="120"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <Grid Grid.Column="1" HorizontalAlignment="Right" Width="390">
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="120"/><ColumnDefinition Width="270"/></Grid.ColumnDefinitions>
                     <Border Width="108" Height="108" CornerRadius="54" BorderBrush="#38BDF8" BorderThickness="3" Background="#07111F" HorizontalAlignment="Center" VerticalAlignment="Center">
                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                            <TextBlock x:Name="TxtScoreHero" Text="0" FontSize="32" FontWeight="Bold" Foreground="#16A34A" HorizontalAlignment="Center"/>
+                            <TextBlock x:Name="TxtScoreHero" Text="100" FontSize="32" FontWeight="Bold" Foreground="#16A34A" HorizontalAlignment="Center"/>
                             <TextBlock Text="/100" FontSize="12" Foreground="{StaticResource TextMuted}" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
@@ -306,7 +306,7 @@
                                 <TextBlock x:Name="TxtAiAdvice" Text="Lance un audit ou une optimisation pour générer une synthèse IA." Foreground="#111827" TextWrapping="Wrap" Margin="0,8,0,0"/>
                             </StackPanel>
                         </Border>
-                    <TextBox x:Name="TxtAi" IsReadOnly="True" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" FontFamily="Consolas" FontSize="12" Padding="12" MinHeight="170" TextChanged="TxtAi_TextChanged"/>
+                    <TextBox x:Name="TxtAi" IsReadOnly="True" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" TextWrapping="Wrap" FontFamily="Consolas" FontSize="12" Padding="12" MinHeight="170"/>
                 </DockPanel>
             </Border>
             <Border Grid.Column="1" Style="{StaticResource Card}" Margin="0">
@@ -319,5 +319,7 @@
     </Grid>
     </ScrollViewer>
 </Window>
+
+
 
 
