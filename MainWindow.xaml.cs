@@ -35,6 +35,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+            InitializeDashboardScoreGauge();
         _engine = new AdaptiveTaskEngine(Dispatcher);
         WireEngine();
         ActiveTasksItems.ItemsSource = _engine.ActiveTasks;
@@ -557,7 +558,116 @@ public partial class MainWindow : Window
         _cts?.Dispose();
         base.OnClosed(e);
     }
+
+    private void TxtAi_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+    {
+        RefreshDashboardScoreFromAiText();
+    }
+
+    private void InitializeDashboardScoreGauge()
+    {
+        SetDashboardScore(0);
+    }
+
+    private void RefreshDashboardScoreFromAiText()
+    {
+        string text = TxtAi?.Text ?? string.Empty;
+        int score = ExtractDashboardScoreFromAiText(text);
+        SetDashboardScore(score);
+    }
+
+    private static int ExtractDashboardScoreFromAiText(string text)
+    {
+        if (string.IsNullOrWhiteSpace(text)) return 0;
+
+        var averageMatch = System.Text.RegularExpressions.Regex.Match(
+            text,
+            @"moyenne\s+(\d{1,3})\s*/\s*100",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+        if (averageMatch.Success)
+        {
+            int averageScore;
+            if (int.TryParse(averageMatch.Groups[1].Value, out averageScore))
+            {
+                return ClampDashboardScore(averageScore);
+            }
+        }
+
+        var indicators = System.Text.RegularExpressions.Regex.Matches(
+            text,
+            @"(?:Perf|S[ée]cu|Stockage|Update|Stabilit[ée])\s*:??\s*(\d{1,3})",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+        if (indicators.Count > 0)
+        {
+            int total = 0;
+            int count = 0;
+
+            foreach (System.Text.RegularExpressions.Match indicator in indicators)
+            {
+                int value;
+                if (int.TryParse(indicator.Groups[1].Value, out value))
+                {
+                    total += ClampDashboardScore(value);
+                    count++;
+                }
+            }
+
+            if (count > 0)
+            {
+                return ClampDashboardScore((int)Math.Round(total / (double)count, MidpointRounding.AwayFromZero));
+            }
+        }
+
+        var healthMatch = System.Text.RegularExpressions.Regex.Match(
+            text,
+            @"Sant[ée]\s+IA\s*:\s*(\d{1,3})\s*/\s*100",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
+
+        if (healthMatch.Success)
+        {
+            int healthScore;
+            if (int.TryParse(healthMatch.Groups[1].Value, out healthScore))
+            {
+                return ClampDashboardScore(healthScore);
+            }
+        }
+
+        return 0;
+    }
+
+    private static int ClampDashboardScore(int score)
+    {
+        if (score < 0) return 0;
+        if (score > 100) return 100;
+        return score;
+    }
+
+    private void SetDashboardScore(int score)
+    {
+        score = ClampDashboardScore(score);
+        TxtScoreHero.Text = score.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+        if (score <= 0)
+        {
+            TxtScoreHero.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(100, 116, 139));
+        }
+        else if (score >= 85)
+        {
+            TxtScoreHero.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(34, 197, 94));
+        }
+        else if (score >= 70)
+        {
+            TxtScoreHero.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(245, 158, 11));
+        }
+        else
+        {
+            TxtScoreHero.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(239, 68, 68));
+        }
+    }
 }
+
 
 
 
