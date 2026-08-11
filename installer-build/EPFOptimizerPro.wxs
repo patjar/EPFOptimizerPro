@@ -1,9 +1,9 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
   <Package
     Name="EPF Optimizer Pro"
     Manufacturer="EPF"
-    Version="3.9.39"
+    Version="3.9.40"
     UpgradeCode="0db39f56-f090-4e32-9263-8c78fb1b49f4"
     Scope="perMachine">
 
