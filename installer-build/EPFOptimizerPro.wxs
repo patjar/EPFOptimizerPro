@@ -3,7 +3,7 @@
   <Package
     Name="EPF Optimizer Pro"
     Manufacturer="EPF"
-    Version="3.9.38"
+    Version="3.9.39"
     UpgradeCode="0db39f56-f090-4e32-9263-8c78fb1b49f4"
     Scope="perMachine">
 
@@ -775,6 +775,7 @@
     </Component>
   </Package>
 </Wix>
+
 
 
 
