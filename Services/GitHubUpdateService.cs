@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
@@ -64,12 +64,12 @@ public sealed class GitHubUpdateService
     {
         string programDataFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-            "WinOptimia",
+            "EPFOptimizerPro",
             "Updates");
 
         string localFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            "WinOptimia",
+            "EPFOptimizerPro",
             "Updates");
 
         string targetFolder = EnsureWritableFolder(programDataFolder, localFolder);
@@ -198,6 +198,3 @@ public sealed class GitHubUpdateService
         return fileName;
     }
 }
-
-
-
