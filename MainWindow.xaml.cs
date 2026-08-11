@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Principal;
 using System.Linq;
@@ -478,6 +478,52 @@ public partial class MainWindow : Window
             BtnCheckUpdate.IsEnabled = true;
         }
     }
+    private void StartUpdateInstallerAndExit(string msiPath)
+    {
+        if (string.IsNullOrWhiteSpace(msiPath) || !File.Exists(msiPath))
+        {
+            throw new FileNotFoundException("MSI update introuvable.", msiPath);
+        }
+
+        string exePath = Process.GetCurrentProcess().MainModule?.FileName
+            ?? Path.Combine(AppContext.BaseDirectory, "EPFOptimizerPro.exe");
+
+        string scriptPath = Path.Combine(
+            Path.GetTempPath(),
+            "EPFOptimizerPro-Update-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".ps1");
+
+        string logPath = Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-install.log");
+
+        string script = string.Join(Environment.NewLine, new[]
+        {
+            "$ErrorActionPreference = 'Stop'",
+            "$targetPid = " + Environment.ProcessId.ToString(),
+            "$msi = " + ToPowerShellSingleQuoted(msiPath),
+            "$exe = " + ToPowerShellSingleQuoted(exePath),
+            "$log = " + ToPowerShellSingleQuoted(logPath),
+            "$limit = (Get-Date).AddSeconds(60)",
+            "while ((Get-Process -Id $targetPid -ErrorAction SilentlyContinue) -and ((Get-Date) -lt $limit)) { Start-Sleep -Milliseconds 500 }",
+            "Start-Process -FilePath 'msiexec.exe' -ArgumentList @('/i', $msi, '/qn', '/L*v', $log) -Wait",
+            "if (Test-Path $exe) { Start-Process -FilePath $exe }"
+        });
+
+        File.WriteAllText(scriptPath, script, new System.Text.UTF8Encoding(false));
+
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "powershell.exe",
+            Arguments = "-NoProfile -ExecutionPolicy Bypass -File \"" + scriptPath + "\"",
+            UseShellExecute = true,
+            Verb = "runas"
+        });
+
+        Application.Current.Shutdown();
+    }
+
+    private static string ToPowerShellSingleQuoted(string value)
+    {
+        return "'" + value.Replace("'", "''") + "'";
+    }
     private async void BtnDownloadUpdate_Click(object sender, RoutedEventArgs e)
     {
         if (_lastUpdateCheck?.Asset is null || _cts is not null || _updateCts is not null) return;
@@ -509,13 +555,11 @@ public partial class MainWindow : Window
             ProgressGlobal.Value = 100;
             TxtPercent.Text = "100 %";
             Append("[OK] Archive téléchargée : " + zipPath);
-
-            string? folder = Path.GetDirectoryName(zipPath);
-            if (!string.IsNullOrWhiteSpace(folder) && Directory.Exists(folder))
-            {
-                Process.Start(new ProcessStartInfo(folder) { UseShellExecute = true });
-                Append("[INFO] Dossier Updates ouvert : " + folder);
-            }
+            Append("[INFO] Installation automatique de l'update...");
+            TxtUpdateStatus.Text = "Installation de l'update...";
+            TxtStep.Text = "Installation update";
+            StartUpdateInstallerAndExit(zipPath);
+            return;
         }
         catch (OperationCanceledException)
         {
@@ -681,23 +725,3 @@ public partial class MainWindow : Window
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
