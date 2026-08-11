@@ -34,7 +34,7 @@ public sealed class GitHubUpdateService
 
         var candidates = releases
             .Where(r => !r.Draft)
-            .Select(r => new { Release = r, Asset = FindEpfZipAsset(r), Version = TryNormalizeVersion(r.TagName) })
+            .Select(r => new { Release = r, Asset = FindEpfUpdateAsset(r), Version = TryNormalizeVersion(r.TagName) })
             .Where(x => x.Asset is not null && x.Version is not null)
             .OrderByDescending(x => x.Version)
             .ToList();
@@ -43,7 +43,7 @@ public sealed class GitHubUpdateService
 
         if (selected is null)
         {
-            return NoEpfRelease("Aucune release contenant un ZIP EPFOptimizerPro n'a été trouvée. Les releases WinOptimia sont ignorées.");
+            return NoEpfRelease("Aucune release contenant un MSI ou ZIP EPFOptimizerPro n'a été trouvée. Les releases WinOptimia sont ignorées.");
         }
 
         string latest = selected.Version!.ToString();
@@ -75,7 +75,7 @@ public sealed class GitHubUpdateService
         string targetFolder = EnsureWritableFolder(programDataFolder, localFolder);
 
         string safeName = string.IsNullOrWhiteSpace(asset.Name)
-            ? "EPFOptimizerPro-update.zip"
+            ? "EPFOptimizerPro-update.msi"
             : SanitizeFileName(asset.Name);
 
         string outputPath = GetAvailableFilePath(targetFolder, safeName);
@@ -125,10 +125,11 @@ public sealed class GitHubUpdateService
         };
     }
 
-    private static GitHubAsset? FindEpfZipAsset(GitHubRelease release)
+    private static GitHubAsset? FindEpfUpdateAsset(GitHubRelease release)
     {
         return release.Assets.FirstOrDefault(a =>
-            a.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase)
+            (a.Name.EndsWith(".msi", StringComparison.OrdinalIgnoreCase)
+                || a.Name.EndsWith(".zip", StringComparison.OrdinalIgnoreCase))
             && (a.Name.Contains("EPFOptimizerPro", StringComparison.OrdinalIgnoreCase)
                 || a.Name.Contains("EPF-Optimizer", StringComparison.OrdinalIgnoreCase)
                 || a.Name.Contains("EPFOptimizer", StringComparison.OrdinalIgnoreCase)));
@@ -197,5 +198,6 @@ public sealed class GitHubUpdateService
         return fileName;
     }
 }
+
 
 
