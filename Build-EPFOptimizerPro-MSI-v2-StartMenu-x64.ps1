@@ -14,7 +14,18 @@ $OutputDir = Join-Path $ProjectRoot "dist"
 $ProductName = "EPF Optimizer Pro"
 $Manufacturer = "EPF"
 $UpgradeCode = "0db39f56-f090-4e32-9263-8c78fb1b49f4"
-$SignTool = "C:\Program Files (x86)\Windows Kits\10\Tools\bin\i386\signtool.exe"
+$SignToolCandidates = @(
+    "C:\Program Files (x86)\Windows Kits\10\bin\*\x64\signtool.exe",
+    "C:\Program Files (x86)\Windows Kits\10\bin\*\x86\signtool.exe",
+    "C:\Program Files (x86)\Windows Kits\10\Tools\bin\x64\signtool.exe",
+    "C:\Program Files (x86)\Windows Kits\10\Tools\bin\x86\signtool.exe",
+    "C:\Program Files (x86)\Windows Kits\10\Tools\bin\i386\signtool.exe"
+)
+$SignTool = Get-ChildItem -Path $SignToolCandidates -File -ErrorAction SilentlyContinue |
+    Where-Object { $_.FullName -notmatch "\\arm64\\" } |
+    Sort-Object @{Expression={ if ($_.FullName -match "\\x64\\") {0} elseif ($_.FullName -match "\\x86\\|\\i386\\") {1} else {2} }}, LastWriteTime -Descending |
+    Select-Object -First 1 -ExpandProperty FullName
+if (-not $SignTool) { $SignTool = "" }
 $CertFile = "C:\Certificats\RADIUSServerCertificate.p12"
 
 Write-Host ""
@@ -88,7 +99,6 @@ $Wxs = @"
     <MajorUpgrade DowngradeErrorMessage="Une version plus recente de EPF Optimizer Pro est deja installee." />
     <MediaTemplate EmbedCab="yes" />
 
-    <Property Id="ARPINSTALLLOCATION" Value="[INSTALLFOLDER]" />
 
     <Feature Id="MainFeature" Title="$ProductName" Level="1">
       <ComponentGroupRef Id="AppFiles" />
