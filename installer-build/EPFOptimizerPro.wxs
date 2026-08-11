@@ -1,0 +1,780 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="EPF Optimizer Pro"
+    Manufacturer="EPF"
+    Version="3.9.38"
+    UpgradeCode="0db39f56-f090-4e32-9263-8c78fb1b49f4"
+    Scope="perMachine">
+
+    <MajorUpgrade DowngradeErrorMessage="Une version plus recente de EPF Optimizer Pro est deja installee." />
+    <MediaTemplate EmbedCab="yes" />
+
+
+    <Feature Id="MainFeature" Title="EPF Optimizer Pro" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentRef Id="StartMenuShortcutComponent" />
+    </Feature>
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="EPF Optimizer Pro" />
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="EPF Optimizer Pro" />
+    </StandardDirectory>
+
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Component Id="cmp0001" Guid="*" Bitness="always64">
+        <File Id="fil0001" Name="Accessibility.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\Accessibility.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0002" Guid="*" Bitness="always64">
+        <File Id="fil0002" Name="clretwrc.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\clretwrc.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0003" Guid="*" Bitness="always64">
+        <File Id="fil0003" Name="clrgc.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\clrgc.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0004" Guid="*" Bitness="always64">
+        <File Id="fil0004" Name="clrgcexp.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\clrgcexp.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0005" Guid="*" Bitness="always64">
+        <File Id="fil0005" Name="clrjit.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\clrjit.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0006" Guid="*" Bitness="always64">
+        <File Id="fil0006" Name="coreclr.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\coreclr.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0007" Guid="*" Bitness="always64">
+        <File Id="fil0007" Name="createdump.exe" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\createdump.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0008" Guid="*" Bitness="always64">
+        <File Id="fil0008" Name="D3DCompiler_47_cor3.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\D3DCompiler_47_cor3.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0009" Guid="*" Bitness="always64">
+        <File Id="fil0009" Name="DirectWriteForwarder.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\DirectWriteForwarder.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0010" Guid="*" Bitness="always64">
+        <File Id="fil0010" Name="EPFOptimizerPro.deps.json" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\EPFOptimizerPro.deps.json" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0011" Guid="*" Bitness="always64">
+        <File Id="fil0011" Name="EPFOptimizerPro.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\EPFOptimizerPro.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0012" Guid="*" Bitness="always64">
+        <File Id="fil0012" Name="EPFOptimizerPro.exe" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\EPFOptimizerPro.exe" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0013" Guid="*" Bitness="always64">
+        <File Id="fil0013" Name="EPFOptimizerPro.pdb" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\EPFOptimizerPro.pdb" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0014" Guid="*" Bitness="always64">
+        <File Id="fil0014" Name="EPFOptimizerPro.runtimeconfig.json" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\EPFOptimizerPro.runtimeconfig.json" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0015" Guid="*" Bitness="always64">
+        <File Id="fil0015" Name="hostfxr.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\hostfxr.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0016" Guid="*" Bitness="always64">
+        <File Id="fil0016" Name="hostpolicy.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\hostpolicy.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0017" Guid="*" Bitness="always64">
+        <File Id="fil0017" Name="Microsoft.CSharp.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\Microsoft.CSharp.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0018" Guid="*" Bitness="always64">
+        <File Id="fil0018" Name="Microsoft.DiaSymReader.Native.amd64.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\Microsoft.DiaSymReader.Native.amd64.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0019" Guid="*" Bitness="always64">
+        <File Id="fil0019" Name="Microsoft.VisualBasic.Core.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\Microsoft.VisualBasic.Core.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0020" Guid="*" Bitness="always64">
+        <File Id="fil0020" Name="Microsoft.VisualBasic.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\Microsoft.VisualBasic.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0021" Guid="*" Bitness="always64">
+        <File Id="fil0021" Name="Microsoft.Win32.Primitives.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\Microsoft.Win32.Primitives.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0022" Guid="*" Bitness="always64">
+        <File Id="fil0022" Name="Microsoft.Win32.Registry.AccessControl.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\Microsoft.Win32.Registry.AccessControl.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0023" Guid="*" Bitness="always64">
+        <File Id="fil0023" Name="Microsoft.Win32.Registry.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\Microsoft.Win32.Registry.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0024" Guid="*" Bitness="always64">
+        <File Id="fil0024" Name="Microsoft.Win32.SystemEvents.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\Microsoft.Win32.SystemEvents.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0025" Guid="*" Bitness="always64">
+        <File Id="fil0025" Name="mscordaccore.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\mscordaccore.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0026" Guid="*" Bitness="always64">
+        <File Id="fil0026" Name="mscordaccore_amd64_amd64_10.0.1026.32716.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\mscordaccore_amd64_amd64_10.0.1026.32716.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0027" Guid="*" Bitness="always64">
+        <File Id="fil0027" Name="mscordbi.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\mscordbi.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0028" Guid="*" Bitness="always64">
+        <File Id="fil0028" Name="mscorlib.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\mscorlib.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0029" Guid="*" Bitness="always64">
+        <File Id="fil0029" Name="mscorrc.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\mscorrc.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0030" Guid="*" Bitness="always64">
+        <File Id="fil0030" Name="msquic.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\msquic.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0031" Guid="*" Bitness="always64">
+        <File Id="fil0031" Name="netstandard.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\netstandard.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0032" Guid="*" Bitness="always64">
+        <File Id="fil0032" Name="PenImc_cor3.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PenImc_cor3.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0033" Guid="*" Bitness="always64">
+        <File Id="fil0033" Name="PresentationCore.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationCore.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0034" Guid="*" Bitness="always64">
+        <File Id="fil0034" Name="PresentationFramework.Aero.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework.Aero.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0035" Guid="*" Bitness="always64">
+        <File Id="fil0035" Name="PresentationFramework.Aero2.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework.Aero2.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0036" Guid="*" Bitness="always64">
+        <File Id="fil0036" Name="PresentationFramework.AeroLite.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework.AeroLite.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0037" Guid="*" Bitness="always64">
+        <File Id="fil0037" Name="PresentationFramework.Classic.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework.Classic.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0038" Guid="*" Bitness="always64">
+        <File Id="fil0038" Name="PresentationFramework.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0039" Guid="*" Bitness="always64">
+        <File Id="fil0039" Name="PresentationFramework.Fluent.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework.Fluent.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0040" Guid="*" Bitness="always64">
+        <File Id="fil0040" Name="PresentationFramework.Luna.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework.Luna.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0041" Guid="*" Bitness="always64">
+        <File Id="fil0041" Name="PresentationFramework.Royale.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework.Royale.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0042" Guid="*" Bitness="always64">
+        <File Id="fil0042" Name="PresentationFramework-SystemCore.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework-SystemCore.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0043" Guid="*" Bitness="always64">
+        <File Id="fil0043" Name="PresentationFramework-SystemData.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework-SystemData.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0044" Guid="*" Bitness="always64">
+        <File Id="fil0044" Name="PresentationFramework-SystemDrawing.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework-SystemDrawing.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0045" Guid="*" Bitness="always64">
+        <File Id="fil0045" Name="PresentationFramework-SystemXml.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework-SystemXml.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0046" Guid="*" Bitness="always64">
+        <File Id="fil0046" Name="PresentationFramework-SystemXmlLinq.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationFramework-SystemXmlLinq.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0047" Guid="*" Bitness="always64">
+        <File Id="fil0047" Name="PresentationNative_cor3.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationNative_cor3.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0048" Guid="*" Bitness="always64">
+        <File Id="fil0048" Name="PresentationUI.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\PresentationUI.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0049" Guid="*" Bitness="always64">
+        <File Id="fil0049" Name="ReachFramework.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\ReachFramework.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0050" Guid="*" Bitness="always64">
+        <File Id="fil0050" Name="System.AppContext.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.AppContext.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0051" Guid="*" Bitness="always64">
+        <File Id="fil0051" Name="System.Buffers.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Buffers.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0052" Guid="*" Bitness="always64">
+        <File Id="fil0052" Name="System.CodeDom.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.CodeDom.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0053" Guid="*" Bitness="always64">
+        <File Id="fil0053" Name="System.Collections.Concurrent.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Collections.Concurrent.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0054" Guid="*" Bitness="always64">
+        <File Id="fil0054" Name="System.Collections.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Collections.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0055" Guid="*" Bitness="always64">
+        <File Id="fil0055" Name="System.Collections.Immutable.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Collections.Immutable.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0056" Guid="*" Bitness="always64">
+        <File Id="fil0056" Name="System.Collections.NonGeneric.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Collections.NonGeneric.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0057" Guid="*" Bitness="always64">
+        <File Id="fil0057" Name="System.Collections.Specialized.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Collections.Specialized.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0058" Guid="*" Bitness="always64">
+        <File Id="fil0058" Name="System.ComponentModel.Annotations.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ComponentModel.Annotations.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0059" Guid="*" Bitness="always64">
+        <File Id="fil0059" Name="System.ComponentModel.DataAnnotations.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ComponentModel.DataAnnotations.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0060" Guid="*" Bitness="always64">
+        <File Id="fil0060" Name="System.ComponentModel.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ComponentModel.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0061" Guid="*" Bitness="always64">
+        <File Id="fil0061" Name="System.ComponentModel.EventBasedAsync.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ComponentModel.EventBasedAsync.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0062" Guid="*" Bitness="always64">
+        <File Id="fil0062" Name="System.ComponentModel.Primitives.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ComponentModel.Primitives.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0063" Guid="*" Bitness="always64">
+        <File Id="fil0063" Name="System.ComponentModel.TypeConverter.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ComponentModel.TypeConverter.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0064" Guid="*" Bitness="always64">
+        <File Id="fil0064" Name="System.Configuration.ConfigurationManager.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Configuration.ConfigurationManager.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0065" Guid="*" Bitness="always64">
+        <File Id="fil0065" Name="System.Configuration.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Configuration.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0066" Guid="*" Bitness="always64">
+        <File Id="fil0066" Name="System.Console.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Console.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0067" Guid="*" Bitness="always64">
+        <File Id="fil0067" Name="System.Core.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Core.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0068" Guid="*" Bitness="always64">
+        <File Id="fil0068" Name="System.Data.Common.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Data.Common.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0069" Guid="*" Bitness="always64">
+        <File Id="fil0069" Name="System.Data.DataSetExtensions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Data.DataSetExtensions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0070" Guid="*" Bitness="always64">
+        <File Id="fil0070" Name="System.Data.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Data.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0071" Guid="*" Bitness="always64">
+        <File Id="fil0071" Name="System.Diagnostics.Contracts.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.Contracts.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0072" Guid="*" Bitness="always64">
+        <File Id="fil0072" Name="System.Diagnostics.Debug.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.Debug.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0073" Guid="*" Bitness="always64">
+        <File Id="fil0073" Name="System.Diagnostics.DiagnosticSource.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.DiagnosticSource.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0074" Guid="*" Bitness="always64">
+        <File Id="fil0074" Name="System.Diagnostics.EventLog.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.EventLog.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0075" Guid="*" Bitness="always64">
+        <File Id="fil0075" Name="System.Diagnostics.EventLog.Messages.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.EventLog.Messages.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0076" Guid="*" Bitness="always64">
+        <File Id="fil0076" Name="System.Diagnostics.FileVersionInfo.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.FileVersionInfo.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0077" Guid="*" Bitness="always64">
+        <File Id="fil0077" Name="System.Diagnostics.PerformanceCounter.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.PerformanceCounter.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0078" Guid="*" Bitness="always64">
+        <File Id="fil0078" Name="System.Diagnostics.Process.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.Process.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0079" Guid="*" Bitness="always64">
+        <File Id="fil0079" Name="System.Diagnostics.StackTrace.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.StackTrace.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0080" Guid="*" Bitness="always64">
+        <File Id="fil0080" Name="System.Diagnostics.TextWriterTraceListener.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.TextWriterTraceListener.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0081" Guid="*" Bitness="always64">
+        <File Id="fil0081" Name="System.Diagnostics.Tools.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.Tools.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0082" Guid="*" Bitness="always64">
+        <File Id="fil0082" Name="System.Diagnostics.TraceSource.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.TraceSource.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0083" Guid="*" Bitness="always64">
+        <File Id="fil0083" Name="System.Diagnostics.Tracing.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Diagnostics.Tracing.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0084" Guid="*" Bitness="always64">
+        <File Id="fil0084" Name="System.DirectoryServices.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.DirectoryServices.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0085" Guid="*" Bitness="always64">
+        <File Id="fil0085" Name="System.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0086" Guid="*" Bitness="always64">
+        <File Id="fil0086" Name="System.Drawing.Common.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Drawing.Common.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0087" Guid="*" Bitness="always64">
+        <File Id="fil0087" Name="System.Drawing.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Drawing.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0088" Guid="*" Bitness="always64">
+        <File Id="fil0088" Name="System.Drawing.Primitives.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Drawing.Primitives.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0089" Guid="*" Bitness="always64">
+        <File Id="fil0089" Name="System.Dynamic.Runtime.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Dynamic.Runtime.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0090" Guid="*" Bitness="always64">
+        <File Id="fil0090" Name="System.Formats.Asn1.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Formats.Asn1.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0091" Guid="*" Bitness="always64">
+        <File Id="fil0091" Name="System.Formats.Nrbf.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Formats.Nrbf.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0092" Guid="*" Bitness="always64">
+        <File Id="fil0092" Name="System.Formats.Tar.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Formats.Tar.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0093" Guid="*" Bitness="always64">
+        <File Id="fil0093" Name="System.Globalization.Calendars.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Globalization.Calendars.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0094" Guid="*" Bitness="always64">
+        <File Id="fil0094" Name="System.Globalization.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Globalization.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0095" Guid="*" Bitness="always64">
+        <File Id="fil0095" Name="System.Globalization.Extensions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Globalization.Extensions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0096" Guid="*" Bitness="always64">
+        <File Id="fil0096" Name="System.IO.Compression.Brotli.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.Compression.Brotli.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0097" Guid="*" Bitness="always64">
+        <File Id="fil0097" Name="System.IO.Compression.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.Compression.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0098" Guid="*" Bitness="always64">
+        <File Id="fil0098" Name="System.IO.Compression.FileSystem.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.Compression.FileSystem.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0099" Guid="*" Bitness="always64">
+        <File Id="fil0099" Name="System.IO.Compression.Native.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.Compression.Native.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0100" Guid="*" Bitness="always64">
+        <File Id="fil0100" Name="System.IO.Compression.ZipFile.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.Compression.ZipFile.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0101" Guid="*" Bitness="always64">
+        <File Id="fil0101" Name="System.IO.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0102" Guid="*" Bitness="always64">
+        <File Id="fil0102" Name="System.IO.FileSystem.AccessControl.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.FileSystem.AccessControl.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0103" Guid="*" Bitness="always64">
+        <File Id="fil0103" Name="System.IO.FileSystem.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.FileSystem.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0104" Guid="*" Bitness="always64">
+        <File Id="fil0104" Name="System.IO.FileSystem.DriveInfo.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.FileSystem.DriveInfo.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0105" Guid="*" Bitness="always64">
+        <File Id="fil0105" Name="System.IO.FileSystem.Primitives.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.FileSystem.Primitives.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0106" Guid="*" Bitness="always64">
+        <File Id="fil0106" Name="System.IO.FileSystem.Watcher.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.FileSystem.Watcher.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0107" Guid="*" Bitness="always64">
+        <File Id="fil0107" Name="System.IO.IsolatedStorage.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.IsolatedStorage.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0108" Guid="*" Bitness="always64">
+        <File Id="fil0108" Name="System.IO.MemoryMappedFiles.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.MemoryMappedFiles.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0109" Guid="*" Bitness="always64">
+        <File Id="fil0109" Name="System.IO.Packaging.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.Packaging.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0110" Guid="*" Bitness="always64">
+        <File Id="fil0110" Name="System.IO.Pipelines.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.Pipelines.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0111" Guid="*" Bitness="always64">
+        <File Id="fil0111" Name="System.IO.Pipes.AccessControl.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.Pipes.AccessControl.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0112" Guid="*" Bitness="always64">
+        <File Id="fil0112" Name="System.IO.Pipes.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.Pipes.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0113" Guid="*" Bitness="always64">
+        <File Id="fil0113" Name="System.IO.UnmanagedMemoryStream.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.IO.UnmanagedMemoryStream.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0114" Guid="*" Bitness="always64">
+        <File Id="fil0114" Name="System.Linq.AsyncEnumerable.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Linq.AsyncEnumerable.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0115" Guid="*" Bitness="always64">
+        <File Id="fil0115" Name="System.Linq.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Linq.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0116" Guid="*" Bitness="always64">
+        <File Id="fil0116" Name="System.Linq.Expressions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Linq.Expressions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0117" Guid="*" Bitness="always64">
+        <File Id="fil0117" Name="System.Linq.Parallel.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Linq.Parallel.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0118" Guid="*" Bitness="always64">
+        <File Id="fil0118" Name="System.Linq.Queryable.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Linq.Queryable.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0119" Guid="*" Bitness="always64">
+        <File Id="fil0119" Name="System.Memory.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Memory.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0120" Guid="*" Bitness="always64">
+        <File Id="fil0120" Name="System.Net.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0121" Guid="*" Bitness="always64">
+        <File Id="fil0121" Name="System.Net.Http.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.Http.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0122" Guid="*" Bitness="always64">
+        <File Id="fil0122" Name="System.Net.Http.Json.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.Http.Json.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0123" Guid="*" Bitness="always64">
+        <File Id="fil0123" Name="System.Net.HttpListener.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.HttpListener.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0124" Guid="*" Bitness="always64">
+        <File Id="fil0124" Name="System.Net.Mail.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.Mail.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0125" Guid="*" Bitness="always64">
+        <File Id="fil0125" Name="System.Net.NameResolution.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.NameResolution.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0126" Guid="*" Bitness="always64">
+        <File Id="fil0126" Name="System.Net.NetworkInformation.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.NetworkInformation.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0127" Guid="*" Bitness="always64">
+        <File Id="fil0127" Name="System.Net.Ping.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.Ping.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0128" Guid="*" Bitness="always64">
+        <File Id="fil0128" Name="System.Net.Primitives.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.Primitives.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0129" Guid="*" Bitness="always64">
+        <File Id="fil0129" Name="System.Net.Quic.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.Quic.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0130" Guid="*" Bitness="always64">
+        <File Id="fil0130" Name="System.Net.Requests.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.Requests.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0131" Guid="*" Bitness="always64">
+        <File Id="fil0131" Name="System.Net.Security.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.Security.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0132" Guid="*" Bitness="always64">
+        <File Id="fil0132" Name="System.Net.ServerSentEvents.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.ServerSentEvents.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0133" Guid="*" Bitness="always64">
+        <File Id="fil0133" Name="System.Net.ServicePoint.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.ServicePoint.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0134" Guid="*" Bitness="always64">
+        <File Id="fil0134" Name="System.Net.Sockets.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.Sockets.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0135" Guid="*" Bitness="always64">
+        <File Id="fil0135" Name="System.Net.WebClient.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.WebClient.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0136" Guid="*" Bitness="always64">
+        <File Id="fil0136" Name="System.Net.WebHeaderCollection.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.WebHeaderCollection.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0137" Guid="*" Bitness="always64">
+        <File Id="fil0137" Name="System.Net.WebProxy.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.WebProxy.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0138" Guid="*" Bitness="always64">
+        <File Id="fil0138" Name="System.Net.WebSockets.Client.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.WebSockets.Client.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0139" Guid="*" Bitness="always64">
+        <File Id="fil0139" Name="System.Net.WebSockets.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Net.WebSockets.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0140" Guid="*" Bitness="always64">
+        <File Id="fil0140" Name="System.Numerics.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Numerics.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0141" Guid="*" Bitness="always64">
+        <File Id="fil0141" Name="System.Numerics.Vectors.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Numerics.Vectors.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0142" Guid="*" Bitness="always64">
+        <File Id="fil0142" Name="System.ObjectModel.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ObjectModel.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0143" Guid="*" Bitness="always64">
+        <File Id="fil0143" Name="System.Printing.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Printing.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0144" Guid="*" Bitness="always64">
+        <File Id="fil0144" Name="System.Private.CoreLib.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Private.CoreLib.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0145" Guid="*" Bitness="always64">
+        <File Id="fil0145" Name="System.Private.DataContractSerialization.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Private.DataContractSerialization.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0146" Guid="*" Bitness="always64">
+        <File Id="fil0146" Name="System.Private.Uri.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Private.Uri.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0147" Guid="*" Bitness="always64">
+        <File Id="fil0147" Name="System.Private.Windows.Core.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Private.Windows.Core.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0148" Guid="*" Bitness="always64">
+        <File Id="fil0148" Name="System.Private.Windows.GdiPlus.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Private.Windows.GdiPlus.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0149" Guid="*" Bitness="always64">
+        <File Id="fil0149" Name="System.Private.Xml.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Private.Xml.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0150" Guid="*" Bitness="always64">
+        <File Id="fil0150" Name="System.Private.Xml.Linq.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Private.Xml.Linq.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0151" Guid="*" Bitness="always64">
+        <File Id="fil0151" Name="System.Reflection.DispatchProxy.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Reflection.DispatchProxy.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0152" Guid="*" Bitness="always64">
+        <File Id="fil0152" Name="System.Reflection.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Reflection.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0153" Guid="*" Bitness="always64">
+        <File Id="fil0153" Name="System.Reflection.Emit.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Reflection.Emit.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0154" Guid="*" Bitness="always64">
+        <File Id="fil0154" Name="System.Reflection.Emit.ILGeneration.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Reflection.Emit.ILGeneration.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0155" Guid="*" Bitness="always64">
+        <File Id="fil0155" Name="System.Reflection.Emit.Lightweight.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Reflection.Emit.Lightweight.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0156" Guid="*" Bitness="always64">
+        <File Id="fil0156" Name="System.Reflection.Extensions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Reflection.Extensions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0157" Guid="*" Bitness="always64">
+        <File Id="fil0157" Name="System.Reflection.Metadata.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Reflection.Metadata.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0158" Guid="*" Bitness="always64">
+        <File Id="fil0158" Name="System.Reflection.Primitives.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Reflection.Primitives.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0159" Guid="*" Bitness="always64">
+        <File Id="fil0159" Name="System.Reflection.TypeExtensions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Reflection.TypeExtensions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0160" Guid="*" Bitness="always64">
+        <File Id="fil0160" Name="System.Resources.Extensions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Resources.Extensions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0161" Guid="*" Bitness="always64">
+        <File Id="fil0161" Name="System.Resources.Reader.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Resources.Reader.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0162" Guid="*" Bitness="always64">
+        <File Id="fil0162" Name="System.Resources.ResourceManager.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Resources.ResourceManager.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0163" Guid="*" Bitness="always64">
+        <File Id="fil0163" Name="System.Resources.Writer.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Resources.Writer.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0164" Guid="*" Bitness="always64">
+        <File Id="fil0164" Name="System.Runtime.CompilerServices.Unsafe.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.CompilerServices.Unsafe.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0165" Guid="*" Bitness="always64">
+        <File Id="fil0165" Name="System.Runtime.CompilerServices.VisualC.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.CompilerServices.VisualC.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0166" Guid="*" Bitness="always64">
+        <File Id="fil0166" Name="System.Runtime.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0167" Guid="*" Bitness="always64">
+        <File Id="fil0167" Name="System.Runtime.Extensions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Extensions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0168" Guid="*" Bitness="always64">
+        <File Id="fil0168" Name="System.Runtime.Handles.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Handles.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0169" Guid="*" Bitness="always64">
+        <File Id="fil0169" Name="System.Runtime.InteropServices.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.InteropServices.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0170" Guid="*" Bitness="always64">
+        <File Id="fil0170" Name="System.Runtime.InteropServices.JavaScript.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.InteropServices.JavaScript.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0171" Guid="*" Bitness="always64">
+        <File Id="fil0171" Name="System.Runtime.InteropServices.RuntimeInformation.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.InteropServices.RuntimeInformation.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0172" Guid="*" Bitness="always64">
+        <File Id="fil0172" Name="System.Runtime.Intrinsics.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Intrinsics.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0173" Guid="*" Bitness="always64">
+        <File Id="fil0173" Name="System.Runtime.Loader.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Loader.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0174" Guid="*" Bitness="always64">
+        <File Id="fil0174" Name="System.Runtime.Numerics.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Numerics.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0175" Guid="*" Bitness="always64">
+        <File Id="fil0175" Name="System.Runtime.Serialization.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Serialization.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0176" Guid="*" Bitness="always64">
+        <File Id="fil0176" Name="System.Runtime.Serialization.Formatters.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Serialization.Formatters.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0177" Guid="*" Bitness="always64">
+        <File Id="fil0177" Name="System.Runtime.Serialization.Json.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Serialization.Json.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0178" Guid="*" Bitness="always64">
+        <File Id="fil0178" Name="System.Runtime.Serialization.Primitives.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Serialization.Primitives.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0179" Guid="*" Bitness="always64">
+        <File Id="fil0179" Name="System.Runtime.Serialization.Xml.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Runtime.Serialization.Xml.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0180" Guid="*" Bitness="always64">
+        <File Id="fil0180" Name="System.Security.AccessControl.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.AccessControl.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0181" Guid="*" Bitness="always64">
+        <File Id="fil0181" Name="System.Security.Claims.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Claims.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0182" Guid="*" Bitness="always64">
+        <File Id="fil0182" Name="System.Security.Cryptography.Algorithms.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.Algorithms.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0183" Guid="*" Bitness="always64">
+        <File Id="fil0183" Name="System.Security.Cryptography.Cng.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.Cng.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0184" Guid="*" Bitness="always64">
+        <File Id="fil0184" Name="System.Security.Cryptography.Csp.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.Csp.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0185" Guid="*" Bitness="always64">
+        <File Id="fil0185" Name="System.Security.Cryptography.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0186" Guid="*" Bitness="always64">
+        <File Id="fil0186" Name="System.Security.Cryptography.Encoding.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.Encoding.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0187" Guid="*" Bitness="always64">
+        <File Id="fil0187" Name="System.Security.Cryptography.OpenSsl.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.OpenSsl.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0188" Guid="*" Bitness="always64">
+        <File Id="fil0188" Name="System.Security.Cryptography.Pkcs.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.Pkcs.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0189" Guid="*" Bitness="always64">
+        <File Id="fil0189" Name="System.Security.Cryptography.Primitives.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.Primitives.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0190" Guid="*" Bitness="always64">
+        <File Id="fil0190" Name="System.Security.Cryptography.ProtectedData.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.ProtectedData.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0191" Guid="*" Bitness="always64">
+        <File Id="fil0191" Name="System.Security.Cryptography.X509Certificates.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.X509Certificates.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0192" Guid="*" Bitness="always64">
+        <File Id="fil0192" Name="System.Security.Cryptography.Xml.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Cryptography.Xml.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0193" Guid="*" Bitness="always64">
+        <File Id="fil0193" Name="System.Security.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0194" Guid="*" Bitness="always64">
+        <File Id="fil0194" Name="System.Security.Permissions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Permissions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0195" Guid="*" Bitness="always64">
+        <File Id="fil0195" Name="System.Security.Principal.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Principal.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0196" Guid="*" Bitness="always64">
+        <File Id="fil0196" Name="System.Security.Principal.Windows.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.Principal.Windows.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0197" Guid="*" Bitness="always64">
+        <File Id="fil0197" Name="System.Security.SecureString.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Security.SecureString.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0198" Guid="*" Bitness="always64">
+        <File Id="fil0198" Name="System.ServiceModel.Web.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ServiceModel.Web.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0199" Guid="*" Bitness="always64">
+        <File Id="fil0199" Name="System.ServiceProcess.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ServiceProcess.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0200" Guid="*" Bitness="always64">
+        <File Id="fil0200" Name="System.Text.Encoding.CodePages.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Text.Encoding.CodePages.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0201" Guid="*" Bitness="always64">
+        <File Id="fil0201" Name="System.Text.Encoding.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Text.Encoding.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0202" Guid="*" Bitness="always64">
+        <File Id="fil0202" Name="System.Text.Encoding.Extensions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Text.Encoding.Extensions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0203" Guid="*" Bitness="always64">
+        <File Id="fil0203" Name="System.Text.Encodings.Web.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Text.Encodings.Web.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0204" Guid="*" Bitness="always64">
+        <File Id="fil0204" Name="System.Text.Json.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Text.Json.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0205" Guid="*" Bitness="always64">
+        <File Id="fil0205" Name="System.Text.RegularExpressions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Text.RegularExpressions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0206" Guid="*" Bitness="always64">
+        <File Id="fil0206" Name="System.Threading.AccessControl.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.AccessControl.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0207" Guid="*" Bitness="always64">
+        <File Id="fil0207" Name="System.Threading.Channels.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.Channels.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0208" Guid="*" Bitness="always64">
+        <File Id="fil0208" Name="System.Threading.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0209" Guid="*" Bitness="always64">
+        <File Id="fil0209" Name="System.Threading.Overlapped.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.Overlapped.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0210" Guid="*" Bitness="always64">
+        <File Id="fil0210" Name="System.Threading.Tasks.Dataflow.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.Tasks.Dataflow.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0211" Guid="*" Bitness="always64">
+        <File Id="fil0211" Name="System.Threading.Tasks.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.Tasks.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0212" Guid="*" Bitness="always64">
+        <File Id="fil0212" Name="System.Threading.Tasks.Extensions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.Tasks.Extensions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0213" Guid="*" Bitness="always64">
+        <File Id="fil0213" Name="System.Threading.Tasks.Parallel.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.Tasks.Parallel.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0214" Guid="*" Bitness="always64">
+        <File Id="fil0214" Name="System.Threading.Thread.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.Thread.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0215" Guid="*" Bitness="always64">
+        <File Id="fil0215" Name="System.Threading.ThreadPool.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.ThreadPool.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0216" Guid="*" Bitness="always64">
+        <File Id="fil0216" Name="System.Threading.Timer.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Threading.Timer.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0217" Guid="*" Bitness="always64">
+        <File Id="fil0217" Name="System.Transactions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Transactions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0218" Guid="*" Bitness="always64">
+        <File Id="fil0218" Name="System.Transactions.Local.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Transactions.Local.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0219" Guid="*" Bitness="always64">
+        <File Id="fil0219" Name="System.ValueTuple.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.ValueTuple.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0220" Guid="*" Bitness="always64">
+        <File Id="fil0220" Name="System.Web.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Web.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0221" Guid="*" Bitness="always64">
+        <File Id="fil0221" Name="System.Web.HttpUtility.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Web.HttpUtility.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0222" Guid="*" Bitness="always64">
+        <File Id="fil0222" Name="System.Windows.Controls.Ribbon.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Windows.Controls.Ribbon.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0223" Guid="*" Bitness="always64">
+        <File Id="fil0223" Name="System.Windows.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Windows.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0224" Guid="*" Bitness="always64">
+        <File Id="fil0224" Name="System.Windows.Extensions.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Windows.Extensions.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0225" Guid="*" Bitness="always64">
+        <File Id="fil0225" Name="System.Windows.Input.Manipulations.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Windows.Input.Manipulations.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0226" Guid="*" Bitness="always64">
+        <File Id="fil0226" Name="System.Windows.Presentation.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Windows.Presentation.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0227" Guid="*" Bitness="always64">
+        <File Id="fil0227" Name="System.Windows.Primitives.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Windows.Primitives.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0228" Guid="*" Bitness="always64">
+        <File Id="fil0228" Name="System.Xaml.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xaml.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0229" Guid="*" Bitness="always64">
+        <File Id="fil0229" Name="System.Xml.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xml.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0230" Guid="*" Bitness="always64">
+        <File Id="fil0230" Name="System.Xml.Linq.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xml.Linq.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0231" Guid="*" Bitness="always64">
+        <File Id="fil0231" Name="System.Xml.ReaderWriter.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xml.ReaderWriter.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0232" Guid="*" Bitness="always64">
+        <File Id="fil0232" Name="System.Xml.Serialization.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xml.Serialization.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0233" Guid="*" Bitness="always64">
+        <File Id="fil0233" Name="System.Xml.XDocument.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xml.XDocument.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0234" Guid="*" Bitness="always64">
+        <File Id="fil0234" Name="System.Xml.XmlDocument.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xml.XmlDocument.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0235" Guid="*" Bitness="always64">
+        <File Id="fil0235" Name="System.Xml.XmlSerializer.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xml.XmlSerializer.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0236" Guid="*" Bitness="always64">
+        <File Id="fil0236" Name="System.Xml.XPath.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xml.XPath.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0237" Guid="*" Bitness="always64">
+        <File Id="fil0237" Name="System.Xml.XPath.XDocument.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\System.Xml.XPath.XDocument.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0238" Guid="*" Bitness="always64">
+        <File Id="fil0238" Name="UIAutomationClient.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\UIAutomationClient.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0239" Guid="*" Bitness="always64">
+        <File Id="fil0239" Name="UIAutomationClientSideProviders.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\UIAutomationClientSideProviders.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0240" Guid="*" Bitness="always64">
+        <File Id="fil0240" Name="UIAutomationProvider.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\UIAutomationProvider.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0241" Guid="*" Bitness="always64">
+        <File Id="fil0241" Name="UIAutomationTypes.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\UIAutomationTypes.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0242" Guid="*" Bitness="always64">
+        <File Id="fil0242" Name="vcruntime140_cor3.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\vcruntime140_cor3.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0243" Guid="*" Bitness="always64">
+        <File Id="fil0243" Name="WindowsBase.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\WindowsBase.dll" KeyPath="yes" />
+      </Component>
+      <Component Id="cmp0244" Guid="*" Bitness="always64">
+        <File Id="fil0244" Name="wpfgfx_cor3.dll" Source="C:\Users\pkjn\Documents\EPFOptimizerPro-Clean\publish\win-x64\wpfgfx_cor3.dll" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <Component Id="StartMenuShortcutComponent" Directory="ApplicationProgramsFolder" Guid="*" Bitness="always64">
+      <Shortcut Id="StartMenuShortcut"
+                Name="EPF Optimizer Pro"
+                Description="EPF Optimizer Pro"
+                Target="[INSTALLFOLDER]EPFOptimizerPro.exe"
+                WorkingDirectory="INSTALLFOLDER" />
+      <RemoveFolder Id="RemoveApplicationProgramsFolder" On="uninstall" />
+      <RegistryValue Root="HKLM"
+                     Key="Software\EPF\EPFOptimizerPro"
+                     Name="StartMenuShortcut"
+                     Type="integer"
+                     Value="1"
+                     KeyPath="yes" />
+    </Component>
+  </Package>
+</Wix>
+
+
+
