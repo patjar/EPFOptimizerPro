@@ -93,7 +93,7 @@ public partial class MainWindow : Window
         _engine.GlobalProgressChanged += OnGlobalProgressChanged;
         _engine.LogWritten += OnLogWritten;
         _engine.RecommendationsUpdated += items => Dispatcher.Invoke(() => RenderRecommendations(items));
-        _engine.ScoreUpdated += score => Dispatcher.Invoke(() => UpdateScoreHero(score));
+        _engine.ScoreUpdated += score => Dispatcher.Invoke(() => { /* Dashboard gauge is updated from HealthScore.Global. */ });
                 _engine.WorkerModeChanged += (count, mode) =>
         {
             _lastWorkerCount = count;
@@ -255,6 +255,7 @@ public partial class MainWindow : Window
         _aiHistory.SaveSnapshot(health, _lastWorkerCount, _lastWorkerMode);
 
         TxtAiHeadline.Text = $"Santé IA : {health.Global}/100";
+        SetDashboardScore(health.Global);
         TxtAiSubScore.Text = $"Perf {health.Performance} | Sécu {health.Security} | Stockage {health.Storage} | Update {health.WindowsUpdate} | Stabilité {health.Stability}";
 
         var tips = _aiAdvisor.Analyze(
@@ -294,6 +295,7 @@ public partial class MainWindow : Window
         string trendText = _aiHistory.GetTrendText();
 
         TxtAiHeadline.Text = $"Santé IA : {health.Global}/100";
+        SetDashboardScore(health.Global);
         TxtAiSubScore.Text = $"Perf {health.Performance} | Sécu {health.Security} | Stockage {health.Storage} | Update {health.WindowsUpdate} | Stabilité {health.Stability}";
         TxtAiAdvice.Text = health.Summary + Environment.NewLine + trendText;
 
