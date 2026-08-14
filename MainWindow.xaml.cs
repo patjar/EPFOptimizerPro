@@ -507,6 +507,37 @@ public partial class MainWindow : Window
             BtnCheckUpdate.IsEnabled = true;
         }
     }
+
+    private static void ValidateDownloadedMsi(string msiPath)
+    {
+        if (string.IsNullOrWhiteSpace(msiPath))
+        {
+            throw new InvalidOperationException("MSI update path is empty.");
+        }
+
+        if (!File.Exists(msiPath))
+        {
+            throw new FileNotFoundException("MSI update introuvable.", msiPath);
+        }
+
+        if (!string.Equals(Path.GetExtension(msiPath), ".msi", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("Le fichier telecharge n'est pas un MSI : " + msiPath);
+        }
+
+        string fileName = Path.GetFileName(msiPath);
+        if (!fileName.StartsWith("EPFOptimizerPro-Setup-v", StringComparison.OrdinalIgnoreCase) ||
+            !fileName.EndsWith(".msi", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("Nom MSI update inattendu : " + fileName);
+        }
+
+        FileInfo fileInfo = new(msiPath);
+        if (fileInfo.Length <= 0)
+        {
+            throw new InvalidOperationException("MSI update vide : " + msiPath);
+        }
+    }
     private void StartUpdateInstallerAndExit(string msiPath)
     {
         if (string.IsNullOrWhiteSpace(msiPath) || !File.Exists(msiPath))
@@ -579,6 +610,8 @@ public partial class MainWindow : Window
             });
 
             string msiPath = await _updateService.DownloadAsync(_lastUpdateCheck.Asset, progress, _updateCts.Token);
+            ValidateDownloadedMsi(msiPath);
+            Append("[OK] MSI valide : " + msiPath);
             TxtUpdateStatus.Text = "Update téléchargée : " + Path.GetFileName(msiPath);
             TxtStep.Text = "Update téléchargée";
             ProgressGlobal.Value = 100;
