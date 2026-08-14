@@ -7,10 +7,11 @@ $ErrorActionPreference = "Stop"
 # - InstallLocation renseigne dans Programmes et fonctionnalites
 # - signature du MSI avec demande de mot de passe, sans stockage
 # - dotnet publish automatique avant generation WiX
+# - WiX source generated under obj to keep Git working tree clean
 
 $ProjectRoot = "C:\Users\pkjn\Documents\EPFOptimizerPro-Clean"
 $PublishDir = Join-Path $ProjectRoot "publish\win-x64"
-$BuildDir = Join-Path $ProjectRoot "installer-build"
+$BuildDir = Join-Path $ProjectRoot "obj\installer-build"
 $OutputDir = Join-Path $ProjectRoot "dist"
 $ProductName = "EPF Optimizer Pro"
 $Manufacturer = "EPF"
