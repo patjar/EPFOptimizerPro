@@ -561,6 +561,9 @@ public partial class MainWindow : Window
             "$msi = " + ToPowerShellSingleQuoted(msiPath),
             "$exe = " + ToPowerShellSingleQuoted(exePath),
             "$log = " + ToPowerShellSingleQuoted(logPath),
+            "$sig = Get-AuthenticodeSignature -FilePath $msi",
+            "if ($sig.Status -ne 'Valid') { throw 'MSI signature invalid: ' + $sig.Status }",
+            "Write-Host ('MSI signature valid: ' + $msi)",
             "$limit = (Get-Date).AddSeconds(60)",
             "while ((Get-Process -Id $targetPid -ErrorAction SilentlyContinue) -and ((Get-Date) -lt $limit)) { Start-Sleep -Milliseconds 500 }",
             "Start-Process -FilePath 'msiexec.exe' -ArgumentList @('/i', $msi, '/qn', '/L*v', $log) -Wait",
@@ -618,6 +621,7 @@ public partial class MainWindow : Window
             TxtPercent.Text = "100 %";
             Append("[OK] MSI téléchargé : " + msiPath);
             Append("[INFO] Installation automatique de l'update...");
+            Append("[INFO] Verification signature MSI avant installation...");
             TxtUpdateStatus.Text = "Installation de l'update...";
             TxtStep.Text = "Installation update";
             StartUpdateInstallerAndExit(msiPath);
