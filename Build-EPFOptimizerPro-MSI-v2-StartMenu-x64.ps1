@@ -1,11 +1,12 @@
-﻿$ErrorActionPreference = "Stop"
+$ErrorActionPreference = "Stop"
 
-# Build MSI EPF Optimizer Pro v2
+# Build MSI EPF Optimizer Pro v3 - autonomous publish
 # Correctifs MSI :
 # - installation dans C:\Program Files\EPF Optimizer Pro pour x64
 # - raccourci menu Demarrer pour que Windows trouve l'application
 # - InstallLocation renseigne dans Programmes et fonctionnalites
 # - signature du MSI avec demande de mot de passe, sans stockage
+# - dotnet publish automatique avant generation WiX
 
 $ProjectRoot = "C:\Users\pkjn\Documents\EPFOptimizerPro-Clean"
 $PublishDir = Join-Path $ProjectRoot "publish\win-x64"
@@ -34,6 +35,20 @@ Write-Host ""
 
 if (-not (Test-Path $ProjectRoot)) { throw "Dossier projet introuvable : $ProjectRoot" }
 Set-Location $ProjectRoot
+# AUTO-PUBLISH-BEGIN
+$Csproj = Join-Path $ProjectRoot "EPFOptimizerPro.csproj"
+if (-not (Test-Path $Csproj)) { throw "Projet introuvable : $Csproj" }
+
+Write-Host "Publication Release win-x64..." -ForegroundColor Cyan
+Remove-Item (Join-Path $ProjectRoot "bin") -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item (Join-Path $ProjectRoot "obj") -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item $PublishDir -Recurse -Force -ErrorAction SilentlyContinue
+& dotnet publish $Csproj -c Release -r win-x64 --self-contained true -o $PublishDir
+if ($LASTEXITCODE -ne 0) { throw "dotnet publish echoue" }
+
+# Current WiX generation expects a flat publish folder. Remove resource subfolders.
+Get-ChildItem $PublishDir -Directory -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force
+# AUTO-PUBLISH-END
 
 if (-not (Test-Path $PublishDir)) { throw "Publish folder introuvable : $PublishDir" }
 $ExeFile = Join-Path $PublishDir "EPFOptimizerPro.exe"
