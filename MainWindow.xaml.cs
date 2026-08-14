@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Principal;
@@ -35,6 +36,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        ApplyDynamicAppVersion();
             InitializeDashboardScoreGauge();
         _engine = new AdaptiveTaskEngine(Dispatcher);
         WireEngine();
@@ -355,7 +357,34 @@ public partial class MainWindow : Window
         TxtScoreHero.Foreground = score >= 85 ? BrushFromHex("#22C55E") : score >= 65 ? BrushFromHex("#F59E0B") : BrushFromHex("#EF4444");
     }
 
-        private void UpdateAdminVisualStatus()
+    
+    private void ApplyDynamicAppVersion()
+    {
+        string displayName = "EPF Optimizer Pro Premium IA v" + GetApplicationDisplayVersion();
+        Title = displayName;
+        TxtAppVersionTitle.Text = displayName;
+    }
+
+    private static string GetApplicationDisplayVersion()
+    {
+        string? informationalVersion = Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+
+        if (!string.IsNullOrWhiteSpace(informationalVersion))
+        {
+            int plusIndex = informationalVersion.IndexOf('+');
+            if (plusIndex > 0)
+            {
+                informationalVersion = informationalVersion.Substring(0, plusIndex);
+            }
+
+            return informationalVersion;
+        }
+
+        return Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0";
+    }
+    private void UpdateAdminVisualStatus()
     {
         bool isAdmin = IsRunningAsAdministrator();
 
