@@ -563,7 +563,7 @@ public partial class MainWindow : Window
         ProgressGlobal.Value = 0;
         TxtPercent.Text = "0 %";
         TxtStep.Text = "Téléchargement update";
-        TxtUpdateStatus.Text = "Téléchargement de l’archive GitHub...";
+        TxtUpdateStatus.Text = "Téléchargement du MSI GitHub...";
         Append("[INFO] Téléchargement update : " + _lastUpdateCheck.Asset.Name);
 
         try
@@ -578,16 +578,16 @@ public partial class MainWindow : Window
                 });
             });
 
-            string zipPath = await _updateService.DownloadAsync(_lastUpdateCheck.Asset, progress, _updateCts.Token);
-            TxtUpdateStatus.Text = "Update téléchargée : " + Path.GetFileName(zipPath);
+            string msiPath = await _updateService.DownloadAsync(_lastUpdateCheck.Asset, progress, _updateCts.Token);
+            TxtUpdateStatus.Text = "Update téléchargée : " + Path.GetFileName(msiPath);
             TxtStep.Text = "Update téléchargée";
             ProgressGlobal.Value = 100;
             TxtPercent.Text = "100 %";
-            Append("[OK] Archive téléchargée : " + zipPath);
+            Append("[OK] MSI téléchargé : " + msiPath);
             Append("[INFO] Installation automatique de l'update...");
             TxtUpdateStatus.Text = "Installation de l'update...";
             TxtStep.Text = "Installation update";
-            StartUpdateInstallerAndExit(zipPath);
+            StartUpdateInstallerAndExit(msiPath);
             return;
         }
         catch (OperationCanceledException)
