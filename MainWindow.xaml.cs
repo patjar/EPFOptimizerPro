@@ -53,7 +53,7 @@ public partial class MainWindow : Window
         ShowStartupAdvice();
         UpdateAdminVisualStatus();
         RenderAiAdvisor(0, 0);
-        TxtUpdateStatus.Text = "Mise à jour : non vérifiée";
+        TxtUpdateStatus.Text = "Mise a jour : GitHub public sans token";
         // Update download disabled until GitHub check has confirmed an available MSI.
         _lastUpdateCheck = null;
         BtnDownloadUpdate.IsEnabled = false;
@@ -401,6 +401,7 @@ public partial class MainWindow : Window
             TxtAdminStatus.Visibility = Visibility.Visible;
             TxtAdminStatus.Foreground = BrushFromHex("#22C55E");
             Append("[INFO] Application lancée avec privilèges administrateur.");
+            Append("[INFO] Mode update : GitHub public sans token personnel.");
         }
         else
         {
