@@ -61,7 +61,7 @@ if (-not (Test-Path $Csproj)) { throw "Projet introuvable : $Csproj" }
 [xml]$ProjectXml = Get-Content $Csproj
 $Version = $ProjectXml.Project.PropertyGroup.Version | Select-Object -First 1
 if ([string]::IsNullOrWhiteSpace($Version)) { $Version = $ProjectXml.Project.PropertyGroup.AssemblyVersion | Select-Object -First 1 }
-if ([string]::IsNullOrWhiteSpace($Version)) { $Version = "3.9.35.0" }
+if ([string]::IsNullOrWhiteSpace($Version)) { throw "Version projet introuvable dans EPFOptimizerPro.csproj" }
 
 $ShortVersion = $Version
 if ($ShortVersion.EndsWith(".0")) { $ShortVersion = $ShortVersion.Substring(0, $ShortVersion.Length - 2) }
