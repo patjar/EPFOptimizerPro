@@ -8,6 +8,9 @@ namespace EPFOptimizerPro.Services;
 
 public sealed class GitHubUpdateService
 {
+    private const string GitHubApiVersion = "2026-03-10";
+    private const string GitHubUserAgent = "EPFOptimizerPro-Updater";
+
     private const string Owner = "patjar";
     private const string Repository = "EPFOptimizerPro";
     private readonly HttpClient _client = new();
@@ -15,8 +18,8 @@ public sealed class GitHubUpdateService
 
     public GitHubUpdateService()
     {
+        ConfigureGitHubHeaders();
         _client.DefaultRequestHeaders.UserAgent.ParseAdd("EPFOptimizerPro/3.7.3.4");
-        _client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
     }
 
     public string CurrentVersion => Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0";
@@ -81,7 +84,7 @@ public sealed class GitHubUpdateService
         string outputPath = GetAvailableFilePath(targetFolder, safeName);
 
         using HttpResponseMessage response = await _client.GetAsync(asset.BrowserDownloadUrl, HttpCompletionOption.ResponseHeadersRead, token);
-        response.EnsureSuccessStatusCode();
+        EnsureGitHubSuccess(response, "GitHub update");
 
         long? totalLength = response.Content.Headers.ContentLength;
         await using Stream source = await response.Content.ReadAsStreamAsync(token);
@@ -114,6 +117,60 @@ public sealed class GitHubUpdateService
         return outputPath;
     }
 
+    private void ConfigureGitHubHeaders()
+    {
+        string currentUserAgent = _client.DefaultRequestHeaders.UserAgent.ToString();
+        if (!currentUserAgent.Contains(GitHubUserAgent, StringComparison.OrdinalIgnoreCase))
+        {
+            _client.DefaultRequestHeaders.UserAgent.ParseAdd(GitHubUserAgent);
+        }
+
+        if (!_client.DefaultRequestHeaders.Accept.ToString().Contains("application/vnd.github+json", StringComparison.OrdinalIgnoreCase))
+        {
+            _client.DefaultRequestHeaders.Accept.ParseAdd("application/vnd.github+json");
+        }
+
+        if (!_client.DefaultRequestHeaders.Contains("X-GitHub-Api-Version"))
+        {
+            _client.DefaultRequestHeaders.Add("X-GitHub-Api-Version", GitHubApiVersion);
+        }
+    }
+
+    private static void EnsureGitHubSuccess(HttpResponseMessage response, string operation)
+    {
+        if (response.IsSuccessStatusCode)
+        {
+            return;
+        }
+
+        if ((int)response.StatusCode == 403 || (int)response.StatusCode == 429)
+        {
+            string details = BuildRateLimitDetails(response);
+            throw new InvalidOperationException(operation + " impossible : limite GitHub ou acces refuse (" + (int)response.StatusCode + " " + response.ReasonPhrase + "). " + details);
+        }
+
+        response.EnsureSuccessStatusCode();
+    }
+
+    private static string BuildRateLimitDetails(HttpResponseMessage response)
+    {
+        string limit = GetHeaderValue(response, "x-ratelimit-limit");
+        string remaining = GetHeaderValue(response, "x-ratelimit-remaining");
+        string reset = GetHeaderValue(response, "x-ratelimit-reset");
+        string retryAfter = GetHeaderValue(response, "retry-after");
+
+        return "RateLimit(limit=" + limit + ", remaining=" + remaining + ", reset=" + reset + ", retry-after=" + retryAfter + ")";
+    }
+
+    private static string GetHeaderValue(HttpResponseMessage response, string name)
+    {
+        if (response.Headers.TryGetValues(name, out IEnumerable<string>? values))
+        {
+            return string.Join(",", values);
+        }
+
+        return "n/a";
+    }
     private UpdateCheckResult NoEpfRelease(string notes)
     {
         return new UpdateCheckResult
