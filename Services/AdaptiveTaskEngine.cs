@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+using System.Reflection;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
@@ -273,8 +274,28 @@ public sealed class AdaptiveTaskEngine
         return Math.Clamp(100 - warnings * 5 - errors * 15, 0, 100);
     }
 
+    private static string GetApplicationDisplayVersion()
+    {
+        string? informationalVersion = Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+
+        if (!string.IsNullOrWhiteSpace(informationalVersion))
+        {
+            int plusIndex = informationalVersion.IndexOf('+');
+            if (plusIndex > 0)
+            {
+                informationalVersion = informationalVersion.Substring(0, plusIndex);
+            }
+
+            return informationalVersion;
+        }
+
+        return Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0";
+    }
     private string CreateReport(IReadOnlyList<AiRecommendation> recommendations, int score, int maxWorkers, double cpuStart, double memoryStart)
     {
+        string appVersion = GetApplicationDisplayVersion();
         string folder = Path.Combine("C:\\Temp", "OptimisationWindows");
         Directory.CreateDirectory(folder);
         string path = Path.Combine(folder, $"Rapport_Adaptive_{Environment.MachineName}_{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.html");
@@ -287,9 +308,9 @@ public sealed class AdaptiveTaskEngine
             $"<tr><td>{WebUtility.HtmlEncode(item.Severity)}</td><td>{WebUtility.HtmlEncode(item.Title)}</td><td>{WebUtility.HtmlEncode(item.Detail)}</td></tr>"));
 
         var html = new StringBuilder();
-        html.AppendLine("<!DOCTYPE html><html lang=\"fr\"><head><meta charset=\"UTF-8\"><title>EPF Optimizer Pro v3.6</title>");
+        html.AppendLine($"<!DOCTYPE html><html lang=\"fr\"><head><meta charset=\"UTF-8\"><title>EPF Optimizer Pro v{appVersion}</title>");
         html.AppendLine("<style>body{font-family:Segoe UI,Arial;background:#0f172a;color:#e5e7eb;margin:0}.wrap{padding:28px}.card{background:#111827;border:1px solid #334155;border-radius:16px;padding:18px;margin:14px 0}h1{color:#38bdf8}table{width:100%;border-collapse:collapse}th{background:#1e293b;color:#e0f2fe}td,th{padding:8px;border-top:1px solid #334155;vertical-align:top}</style></head><body><div class=\"wrap\">");
-        html.AppendLine($"<h1>EPF Optimizer Pro Premium v3.6</h1><p>Score : <b>{score}/100</b> | Workers : <b>{maxWorkers}</b> | CPU initial : {cpuStart:0}% | RAM initiale : {memoryStart:0}%</p>");
+        html.AppendLine($"<h1>EPF Optimizer Pro Premium v{appVersion}</h1><p>Score : <b>{score}/100</b> | Workers : <b>{maxWorkers}</b> | CPU initial : {cpuStart:0}% | RAM initiale : {memoryStart:0}%</p>");
         html.AppendLine("<div class=\"card\"><h2>Tâches indépendantes</h2><table><tr><th>Tâche</th><th>Statut</th><th>Progression</th><th>Message</th></tr>" + taskRows + "</table></div>");
         html.AppendLine("<div class=\"card\"><h2>IA locale</h2><table><tr><th>Niveau</th><th>Sujet</th><th>Détail</th></tr>" + aiRows + "</table></div>");
         html.AppendLine("<div class=\"card\"><h2>Journal</h2><table><tr><th>Heure</th><th>Niveau</th><th>Étape</th><th>Message</th></tr>" + logRows + "</table></div>");
