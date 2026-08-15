@@ -54,6 +54,10 @@ public partial class MainWindow : Window
         UpdateAdminVisualStatus();
         RenderAiAdvisor(0, 0);
         TxtUpdateStatus.Text = "Mise à jour : non vérifiée";
+        // Update download disabled until GitHub check has confirmed an available MSI.
+        _lastUpdateCheck = null;
+        BtnDownloadUpdate.IsEnabled = false;
+        BtnOpenUpdateRelease.IsEnabled = false;
     }
 
     private void ShowStartupAdvice()
@@ -336,7 +340,6 @@ public partial class MainWindow : Window
         BtnAudit.IsEnabled = false;
         BtnOptimize.IsEnabled = false;
         BtnCheckUpdate.IsEnabled = false;
-        BtnDownloadUpdate.IsEnabled = false;
         BtnAudit.Background = BrushFromHex(optimize ? "#1E3A8A" : "#38BDF8");
         BtnOptimize.Background = BrushFromHex(optimize ? "#22C55E" : "#1E3A8A");
         BtnCancel.Background = BrushFromHex("#F59E0B");
@@ -476,8 +479,6 @@ public partial class MainWindow : Window
         if (_cts is not null) return;
 
         BtnCheckUpdate.IsEnabled = false;
-        BtnDownloadUpdate.IsEnabled = false;
-        BtnOpenUpdateRelease.IsEnabled = false;
         TxtUpdateStatus.Text = "Mise à jour : vérification GitHub...";
         Append("[INFO] Vérification GitHub des mises à jour...");
 
@@ -599,7 +600,6 @@ public partial class MainWindow : Window
 
         _updateCts = new CancellationTokenSource();
         BtnCheckUpdate.IsEnabled = false;
-        BtnDownloadUpdate.IsEnabled = false;
         ProgressGlobal.Value = 0;
         TxtPercent.Text = "0 %";
         TxtStep.Text = "Téléchargement update";
