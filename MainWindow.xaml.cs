@@ -53,7 +53,7 @@ public partial class MainWindow : Window
         ShowStartupAdvice();
         UpdateAdminVisualStatus();
         RenderAiAdvisor(0, 0);
-        TxtUpdateStatus.Text = "Mode update : GitHub public sans token" + Environment.NewLine + "\u00c9tat update : non v\u00e9rifi\u00e9";
+        TxtUpdateStatus.Text = FormatUpdateStatus("non v\u00e9rifi\u00e9");
         // Update download disabled until GitHub check has confirmed an available MSI.
         _lastUpdateCheck = null;
         BtnDownloadUpdate.IsEnabled = false;
@@ -475,6 +475,11 @@ public partial class MainWindow : Window
         Append("[INFO] Centre IA ouvert.");
     }
 
+    private static string FormatUpdateStatus(string state)
+    {
+        return "Mode update : GitHub public sans token" + Environment.NewLine + "\u00c9tat update : " + state;
+    }
+
     private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
     {
         if (_cts is not null) return;
@@ -630,7 +635,7 @@ public partial class MainWindow : Window
             Append("[INFO] Installation automatique de l'update...");
             Append("[INFO] Verification signature MSI avant installation...");
             Append("[INFO] Log installation update : " + Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-install.log"));
-            TxtUpdateStatus.Text = "Mode update : GitHub public sans token" + Environment.NewLine + "\u00c9tat update : installation...";
+            TxtUpdateStatus.Text = FormatUpdateStatus("installation...");
             TxtStep.Text = "Installation update";
             StartUpdateInstallerAndExit(msiPath);
             return;
