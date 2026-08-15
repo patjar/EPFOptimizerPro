@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-# Build MSI EPF Optimizer Pro v3 - autonomous publish
+# Build MSI EPF Optimizer Pro - autonomous x64 publish
 # Correctifs MSI :
 # - installation dans C:\Program Files\EPF Optimizer Pro pour x64
 # - raccourci menu Demarrer pour que Windows trouve l'application
@@ -31,7 +31,7 @@ if (-not $SignTool) { $SignTool = "" }
 $CertFile = "C:\Certificats\RADIUSServerCertificate.p12"
 
 Write-Host ""
-Write-Host "=== Build MSI EPF Optimizer Pro v2 ===" -ForegroundColor Cyan
+Write-Host "=== Build MSI EPF Optimizer Pro - autonomous x64 ===" -ForegroundColor Cyan
 Write-Host ""
 
 if (-not (Test-Path $ProjectRoot)) { throw "Dossier projet introuvable : $ProjectRoot" }
