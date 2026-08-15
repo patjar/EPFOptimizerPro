@@ -13,6 +13,11 @@ public partial class App : Application
     private const string SingleInstanceMutexName = "Global\\EPFOptimizerPro-SingleInstance";
     private static Mutex? _singleInstanceMutex;
     private static bool _ownsSingleInstanceMutex;
+    private const string SingleInstanceShowEventName = "Global\\EPFOptimizerPro-ShowMainWindow";
+    private static EventWaitHandle? _singleInstanceShowEvent;
+    private static Thread? _singleInstanceShowThread;
+    private static volatile bool _isExiting;
+
 
     protected override void OnStartup(StartupEventArgs e)
     {
@@ -20,8 +25,10 @@ public partial class App : Application
 
         if (!_ownsSingleInstanceMutex)
         {
+            SignalExistingInstance();
+
             MessageBox.Show(
-                "EPF Optimizer Pro est deja lance.",
+                "EPF Optimizer Pro est d\u00e9j\u00e0 lanc\u00e9. La fen\u00eatre ouverte va \u00eatre affich\u00e9e.",
                 "EPF Optimizer Pro",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -29,6 +36,8 @@ public partial class App : Application
             Shutdown();
             return;
         }
+
+        StartSingleInstanceListener();
 
         base.OnStartup(e);
 
@@ -63,8 +72,76 @@ public partial class App : Application
         e.SetObserved();
     }
 
+    private static void SignalExistingInstance()
+    {
+        try
+        {
+            using EventWaitHandle existingEvent = EventWaitHandle.OpenExisting(SingleInstanceShowEventName);
+            existingEvent.Set();
+        }
+        catch
+        {
+            // No existing event yet or access denied. The second instance will still exit.
+        }
+    }
+
+    private void StartSingleInstanceListener()
+    {
+        _singleInstanceShowEvent = new EventWaitHandle(false, EventResetMode.AutoReset, SingleInstanceShowEventName);
+        _singleInstanceShowThread = new Thread(() =>
+        {
+            while (!_isExiting)
+            {
+                try
+                {
+                    _singleInstanceShowEvent.WaitOne();
+                    if (_isExiting) break;
+                    Dispatcher.BeginInvoke(ActivateMainWindow);
+                }
+                catch
+                {
+                    break;
+                }
+            }
+        })
+        {
+            IsBackground = true,
+            Name = "EPFOptimizerPro single instance listener"
+        };
+
+        _singleInstanceShowThread.Start();
+    }
+
+    private void ActivateMainWindow()
+    {
+        try
+        {
+            Window? window = MainWindow;
+            if (window is null) return;
+
+            if (window.WindowState == WindowState.Minimized)
+            {
+                window.WindowState = WindowState.Normal;
+            }
+
+            window.Show();
+            window.Activate();
+            window.Topmost = true;
+            window.Topmost = false;
+            window.Focus();
+        }
+        catch
+        {
+            // Never crash while trying to restore the existing window.
+        }
+    }
+
     protected override void OnExit(ExitEventArgs e)
     {
+        _isExiting = true;
+        _singleInstanceShowEvent?.Set();
+        _singleInstanceShowEvent?.Dispose();
+
         if (_ownsSingleInstanceMutex)
         {
             _singleInstanceMutex?.ReleaseMutex();
