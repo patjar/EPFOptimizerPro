@@ -1,6 +1,7 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -9,8 +10,26 @@ namespace EPFOptimizerPro;
 
 public partial class App : Application
 {
+    private const string SingleInstanceMutexName = "Global\\EPFOptimizerPro-SingleInstance";
+    private static Mutex? _singleInstanceMutex;
+    private static bool _ownsSingleInstanceMutex;
+
     protected override void OnStartup(StartupEventArgs e)
     {
+        _singleInstanceMutex = new Mutex(true, SingleInstanceMutexName, out _ownsSingleInstanceMutex);
+
+        if (!_ownsSingleInstanceMutex)
+        {
+            MessageBox.Show(
+                "EPF Optimizer Pro est deja lance.",
+                "EPF Optimizer Pro",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+
+            Shutdown();
+            return;
+        }
+
         base.OnStartup(e);
 
         DispatcherUnhandledException += OnDispatcherUnhandledException;
@@ -44,6 +63,16 @@ public partial class App : Application
         e.SetObserved();
     }
 
+    protected override void OnExit(ExitEventArgs e)
+    {
+        if (_ownsSingleInstanceMutex)
+        {
+            _singleInstanceMutex?.ReleaseMutex();
+        }
+
+        _singleInstanceMutex?.Dispose();
+        base.OnExit(e);
+    }
     private static void LogCrash(string source, Exception? exception)
     {
         try
