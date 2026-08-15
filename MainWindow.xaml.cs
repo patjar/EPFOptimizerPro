@@ -568,8 +568,12 @@ public partial class MainWindow : Window
             "Write-Host ('MSI signature valid: ' + $msi)",
             "$limit = (Get-Date).AddSeconds(60)",
             "while ((Get-Process -Id $targetPid -ErrorAction SilentlyContinue) -and ((Get-Date) -lt $limit)) { Start-Sleep -Milliseconds 500 }",
-            "Start-Process -FilePath 'msiexec.exe' -ArgumentList @('/i', $msi, '/qn', '/L*v', $log) -Wait",
-            "if (Test-Path $exe) { Start-Process -FilePath $exe }"
+            "Write-Host ('MSI update path: ' + $msi)",
+            "Write-Host ('MSI log path: ' + $log)",
+            "$p = Start-Process -FilePath 'msiexec.exe' -ArgumentList @('/i', $msi, '/qn', '/norestart', '/L*v', $log) -Wait -PassThru",
+            "Write-Host ('msiexec exit code: ' + $p.ExitCode)",
+            "if ($p.ExitCode -notin @(0,3010)) { throw 'MSI install failed with exit code: ' + $p.ExitCode + ' - log: ' + $log }",
+            "if (Test-Path $exe) { Write-Host ('Relaunching app: ' + $exe); Start-Process -FilePath $exe } else { Write-Host ('App executable not found after install: ' + $exe) }"
         });
 
         File.WriteAllText(scriptPath, script, new System.Text.UTF8Encoding(false));
@@ -624,6 +628,7 @@ public partial class MainWindow : Window
             Append("[OK] MSI téléchargé : " + msiPath);
             Append("[INFO] Installation automatique de l'update...");
             Append("[INFO] Verification signature MSI avant installation...");
+            Append("[INFO] Log installation update : " + Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-install.log"));
             TxtUpdateStatus.Text = "Installation de l'update...";
             TxtStep.Text = "Installation update";
             StartUpdateInstallerAndExit(msiPath);
