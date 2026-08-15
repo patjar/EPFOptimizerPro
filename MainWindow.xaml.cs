@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Diagnostics;
 using System.IO;
 using System.Security.Principal;
@@ -365,31 +364,12 @@ public partial class MainWindow : Window
     
     private void ApplyDynamicAppVersion()
     {
-        string displayName = "EPF Optimizer Pro Premium IA v" + GetApplicationDisplayVersion();
+        string displayName = "EPF Optimizer Pro Premium IA v" + ApplicationVersionProvider.GetDisplayVersion();
         Title = displayName;
         TxtAppVersionTitle.Text = displayName;
     }
 
-    private static string GetApplicationDisplayVersion()
-    {
-        string? informationalVersion = Assembly.GetExecutingAssembly()
-            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-            .InformationalVersion;
-
-        if (!string.IsNullOrWhiteSpace(informationalVersion))
-        {
-            int plusIndex = informationalVersion.IndexOf('+');
-            if (plusIndex > 0)
-            {
-                informationalVersion = informationalVersion.Substring(0, plusIndex);
-            }
-
-            return informationalVersion;
-        }
-
-        return Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "0.0.0";
-    }
-    private void UpdateAdminVisualStatus()
+private void UpdateAdminVisualStatus()
     {
         bool isAdmin = IsRunningAsAdministrator();
 
