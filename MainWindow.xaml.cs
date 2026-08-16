@@ -141,7 +141,7 @@ public partial class MainWindow : Window
         }
         catch (OperationCanceledException)
         {
-            Append("[WARN] Opération annulée.");
+            Append(AppLogTextProvider.OperationCanceled);
             TxtActionHint.Text = ActionStatusTextProvider.OperationCanceled;
         }
         finally
@@ -350,7 +350,7 @@ private void UpdateAdminVisualStatus()
             _adminBlinkTimer.Stop();
             TxtAdminStatus.Visibility = Visibility.Visible;
             TxtAdminStatus.Foreground = UiBrushProvider.FromHex("#22C55E");
-            Append("[INFO] Application lancée avec privilèges administrateur.");
+            Append(AppLogTextProvider.AdminLaunch);
             Append(UpdateLogTextProvider.PublicGitHubMode);
         }
         else
@@ -359,7 +359,7 @@ private void UpdateAdminVisualStatus()
             TxtAdminStatus.Foreground = UiBrushProvider.FromHex("#EF4444");
             _adminBlinkState = true;
             _adminBlinkTimer.Start();
-            Append("[WARN] Application lancée sans privilèges administrateur. Certaines optimisations système peuvent être limitées.");
+            Append(AppLogTextProvider.NonAdminLaunch);
             TxtActionHint.Text = ActionStatusTextProvider.NonAdminLimitations;
         }
     }
@@ -404,7 +404,7 @@ private void BtnCancel_Click(object sender, RoutedEventArgs e)
         };
 
         window.ShowDialog();
-        Append("[INFO] Centre IA ouvert.");
+        Append(AppLogTextProvider.AiCenterOpened);
     }
 
 private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
