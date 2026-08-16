@@ -136,13 +136,13 @@ public partial class MainWindow : Window
         try
         {
             _lastReport = await _engine.RunAsync(optimize, _cts.Token, cpuStart, memoryStart);
-            TxtActionHint.Text = "Tâches terminées. Rapport disponible.";
+            TxtActionHint.Text = ActionStatusTextProvider.CompletedTasksReportAvailable;
             RefreshAiDashboardV2(cpuStart, memoryStart);
         }
         catch (OperationCanceledException)
         {
             Append("[WARN] Opération annulée.");
-            TxtActionHint.Text = "Opération annulée.";
+            TxtActionHint.Text = ActionStatusTextProvider.OperationCanceled;
         }
         finally
         {
@@ -312,7 +312,7 @@ public partial class MainWindow : Window
         BtnAudit.Background = UiBrushProvider.FromHex(optimize ? "#1E3A8A" : "#38BDF8");
         BtnOptimize.Background = UiBrushProvider.FromHex(optimize ? "#22C55E" : "#1E3A8A");
         BtnCancel.Background = UiBrushProvider.FromHex("#F59E0B");
-        TxtActionHint.Text = optimize ? "Optimisation adaptative en cours." : "Audit adaptatif en cours.";
+        TxtActionHint.Text = ActionStatusTextProvider.AdaptiveRunStatus(optimize);
     }
 
     private void ResetButtonVisualState()
@@ -360,7 +360,7 @@ private void UpdateAdminVisualStatus()
             _adminBlinkState = true;
             _adminBlinkTimer.Start();
             Append("[WARN] Application lancée sans privilèges administrateur. Certaines optimisations système peuvent être limitées.");
-            TxtActionHint.Text = "Mode non administrateur : certaines optimisations système peuvent être limitées.";
+            TxtActionHint.Text = ActionStatusTextProvider.NonAdminLimitations;
         }
     }
 
@@ -379,7 +379,7 @@ private void UpdateAdminVisualStatus()
 private void BtnCancel_Click(object sender, RoutedEventArgs e)
     {
         BtnCancel.Background = UiBrushProvider.FromHex("#EF4444");
-        TxtActionHint.Text = "Annulation demandée.";
+        TxtActionHint.Text = ActionStatusTextProvider.CancellationRequested;
         _cts?.Cancel();
         _updateCts?.Cancel();
     }
