@@ -35,4 +35,35 @@ public static class AiDashboardTextFormatter
 
         return sb.ToString();
     }
+
+    public static string FormatDetailedSynthesis(string healthText, string tipsText)
+    {
+        StringBuilder sb = new();
+        sb.AppendLine("Synth\u00e8se IA d\u00e9taill\u00e9e");
+        sb.AppendLine("====================");
+        sb.AppendLine();
+        sb.Append(healthText);
+        sb.AppendLine();
+        sb.AppendLine();
+        sb.AppendLine("Conseils");
+        sb.AppendLine("--------");
+        sb.Append(tipsText);
+        return sb.ToString();
+    }
+
+    public static string FormatDetailedSynthesis(string healthText, string trendText, string tipsText)
+    {
+        StringBuilder sb = new();
+        sb.AppendLine("Synth\u00e8se IA d\u00e9taill\u00e9e");
+        sb.AppendLine("====================");
+        sb.AppendLine();
+        sb.Append(healthText);
+        sb.AppendLine();
+        sb.AppendLine(trendText);
+        sb.AppendLine();
+        sb.AppendLine("Conseils");
+        sb.AppendLine("--------");
+        sb.Append(tipsText);
+        return sb.ToString();
+    }
 }

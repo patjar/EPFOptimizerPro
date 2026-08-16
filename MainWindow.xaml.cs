@@ -259,16 +259,7 @@ public partial class MainWindow : Window
             cpuStart,
             memoryStart);
 
-        TxtAi.Clear();
-        TxtAi.AppendText("Synthèse IA détaillée" + Environment.NewLine);
-        TxtAi.AppendText("====================" + Environment.NewLine + Environment.NewLine);
-        TxtAi.AppendText(_healthScores.RenderText(health));
-        TxtAi.AppendText(Environment.NewLine);
-        TxtAi.AppendText(Environment.NewLine);
-        TxtAi.AppendText("Conseils" + Environment.NewLine);
-        TxtAi.AppendText("--------" + Environment.NewLine);
-        TxtAi.AppendText(_aiAdvisor.RenderText(tips));
-        TxtAi.ScrollToHome();
+        TxtAi.Text = AiDashboardTextFormatter.FormatDetailedSynthesis(             _healthScores.RenderText(health),             _aiAdvisor.RenderText(tips));         TxtAi.ScrollToHome();
     }
 
     private void RefreshAiDashboardV2(double cpuStart, double memoryStart)
@@ -300,17 +291,7 @@ public partial class MainWindow : Window
             cpuStart,
             memoryStart);
 
-        TxtAi.Clear();
-        TxtAi.AppendText("Synthèse IA détaillée" + Environment.NewLine);
-        TxtAi.AppendText("====================" + Environment.NewLine + Environment.NewLine);
-        TxtAi.AppendText(_healthScores.RenderText(health));
-        TxtAi.AppendText(Environment.NewLine);
-        TxtAi.AppendText(trendText + Environment.NewLine);
-        TxtAi.AppendText(Environment.NewLine);
-        TxtAi.AppendText("Conseils" + Environment.NewLine);
-        TxtAi.AppendText("--------" + Environment.NewLine);
-        TxtAi.AppendText(_aiAdvisor.RenderText(tips));
-        TxtAi.ScrollToHome();
+        TxtAi.Text = AiDashboardTextFormatter.FormatDetailedSynthesis(             _healthScores.RenderText(health),             trendText,             _aiAdvisor.RenderText(tips));         TxtAi.ScrollToHome();
     }
     private void Append(string text)
     {
