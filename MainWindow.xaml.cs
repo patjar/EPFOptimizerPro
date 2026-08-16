@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.IO;
-using System.Security.Principal;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
@@ -371,7 +370,7 @@ public partial class MainWindow : Window
 
 private void UpdateAdminVisualStatus()
     {
-        bool isAdmin = IsRunningAsAdministrator();
+        bool isAdmin = SystemPrivilegeService.IsRunningAsAdministrator();
 
         TxtAdminStatus.Text = isAdmin ? "Admin : oui" : "Admin : non";
 
@@ -405,19 +404,6 @@ private void UpdateAdminVisualStatus()
 
         _adminBlinkState = !_adminBlinkState;
         TxtAdminStatus.Foreground = _adminBlinkState ? BrushFromHex("#EF4444") : BrushFromHex("#7F1D1D");
-    }
-    private static bool IsRunningAsAdministrator()
-    {
-        try
-        {
-            using WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            var principal = new WindowsPrincipal(identity);
-            return principal.IsInRole(WindowsBuiltInRole.Administrator);
-        }
-        catch
-        {
-            return false;
-        }
     }
     private static SolidColorBrush BrushFromHex(string hex)
     {
