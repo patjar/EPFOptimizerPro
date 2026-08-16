@@ -665,81 +665,12 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
     private void RefreshDashboardScoreFromAiText()
     {
         string text = TxtAi?.Text ?? string.Empty;
-        int score = ExtractDashboardScoreFromAiText(text);
+        int score = DashboardScoreParser.ExtractFromText(text);
         SetDashboardScore(score);
     }
-
-    private static int ExtractDashboardScoreFromAiText(string text)
+private void SetDashboardScore(int score)
     {
-        if (string.IsNullOrWhiteSpace(text)) return 0;
-
-        var averageMatch = System.Text.RegularExpressions.Regex.Match(
-            text,
-            @"moyenne\s+(\d{1,3})\s*/\s*100",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
-
-        if (averageMatch.Success)
-        {
-            int averageScore;
-            if (int.TryParse(averageMatch.Groups[1].Value, out averageScore))
-            {
-                return ClampDashboardScore(averageScore);
-            }
-        }
-
-        var indicators = System.Text.RegularExpressions.Regex.Matches(
-            text,
-            @"(?:Perf|S[ée]cu|Stockage|Update|Stabilit[ée])\s*:??\s*(\d{1,3})",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
-
-        if (indicators.Count > 0)
-        {
-            int total = 0;
-            int count = 0;
-
-            foreach (System.Text.RegularExpressions.Match indicator in indicators)
-            {
-                int value;
-                if (int.TryParse(indicator.Groups[1].Value, out value))
-                {
-                    total += ClampDashboardScore(value);
-                    count++;
-                }
-            }
-
-            if (count > 0)
-            {
-                return ClampDashboardScore((int)Math.Round(total / (double)count, MidpointRounding.AwayFromZero));
-            }
-        }
-
-        var healthMatch = System.Text.RegularExpressions.Regex.Match(
-            text,
-            @"Sant[ée]\s+IA\s*:\s*(\d{1,3})\s*/\s*100",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
-
-        if (healthMatch.Success)
-        {
-            int healthScore;
-            if (int.TryParse(healthMatch.Groups[1].Value, out healthScore))
-            {
-                return ClampDashboardScore(healthScore);
-            }
-        }
-
-        return 0;
-    }
-
-    private static int ClampDashboardScore(int score)
-    {
-        if (score < 0) return 0;
-        if (score > 100) return 100;
-        return score;
-    }
-
-    private void SetDashboardScore(int score)
-    {
-        score = ClampDashboardScore(score);
+        score = DashboardScoreParser.Clamp(score);
         TxtScoreHero.Text = score.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
         if (score <= 0)
