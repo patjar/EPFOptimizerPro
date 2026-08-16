@@ -351,7 +351,7 @@ private void UpdateAdminVisualStatus()
             TxtAdminStatus.Visibility = Visibility.Visible;
             TxtAdminStatus.Foreground = UiBrushProvider.FromHex("#22C55E");
             Append("[INFO] Application lancée avec privilèges administrateur.");
-            Append("[INFO] Mode update : GitHub public sans token personnel.");
+            Append(UpdateLogTextProvider.PublicGitHubMode);
         }
         else
         {
@@ -413,7 +413,7 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
 
         BtnCheckUpdate.IsEnabled = false;
         TxtUpdateStatus.Text = "Mise à jour : vérification GitHub...";
-        Append("[INFO] Vérification GitHub des mises à jour...");
+        Append(UpdateLogTextProvider.CheckingGitHubUpdates);
 
         try
         {
@@ -426,11 +426,11 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
 
             if (_lastUpdateCheck.UpdateAvailable)
             {
-                Append($"[OK] Mise à jour disponible : {_lastUpdateCheck.LatestVersion}");
+                Append(UpdateLogTextProvider.UpdateAvailable(_lastUpdateCheck.LatestVersion));
             }
             else
             {
-                Append($"[OK] Aucune mise à jour disponible. Version locale : {_lastUpdateCheck.CurrentVersion}, GitHub : {_lastUpdateCheck.LatestVersion}");
+                Append(UpdateLogTextProvider.NoUpdateAvailable(_lastUpdateCheck.CurrentVersion, _lastUpdateCheck.LatestVersion));
             }
         }
         catch (Exception ex)
