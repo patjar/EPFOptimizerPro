@@ -338,9 +338,9 @@ public partial class MainWindow : Window
         BtnAudit.IsEnabled = false;
         BtnOptimize.IsEnabled = false;
         BtnCheckUpdate.IsEnabled = false;
-        BtnAudit.Background = BrushFromHex(optimize ? "#1E3A8A" : "#38BDF8");
-        BtnOptimize.Background = BrushFromHex(optimize ? "#22C55E" : "#1E3A8A");
-        BtnCancel.Background = BrushFromHex("#F59E0B");
+        BtnAudit.Background = UiBrushProvider.FromHex(optimize ? "#1E3A8A" : "#38BDF8");
+        BtnOptimize.Background = UiBrushProvider.FromHex(optimize ? "#22C55E" : "#1E3A8A");
+        BtnCancel.Background = UiBrushProvider.FromHex("#F59E0B");
         TxtActionHint.Text = optimize ? "Optimisation adaptative en cours." : "Audit adaptatif en cours.";
     }
 
@@ -349,15 +349,15 @@ public partial class MainWindow : Window
         BtnAudit.IsEnabled = true;
         BtnOptimize.IsEnabled = true;
         BtnCheckUpdate.IsEnabled = true;
-        BtnAudit.Background = BrushFromHex("#2563EB");
-        BtnOptimize.Background = BrushFromHex("#2563EB");
-        BtnCancel.Background = BrushFromHex("#2563EB");
+        BtnAudit.Background = UiBrushProvider.FromHex("#2563EB");
+        BtnOptimize.Background = UiBrushProvider.FromHex("#2563EB");
+        BtnCancel.Background = UiBrushProvider.FromHex("#2563EB");
     }
 
     private void UpdateScoreHero(int score)
     {
         TxtScoreHero.Text = score.ToString();
-        TxtScoreHero.Foreground = score >= 85 ? BrushFromHex("#22C55E") : score >= 65 ? BrushFromHex("#F59E0B") : BrushFromHex("#EF4444");
+        TxtScoreHero.Foreground = score >= 85 ? UiBrushProvider.FromHex("#22C55E") : score >= 65 ? UiBrushProvider.FromHex("#F59E0B") : UiBrushProvider.FromHex("#EF4444");
     }
 
     
@@ -378,14 +378,14 @@ private void UpdateAdminVisualStatus()
         {
             _adminBlinkTimer.Stop();
             TxtAdminStatus.Visibility = Visibility.Visible;
-            TxtAdminStatus.Foreground = BrushFromHex("#22C55E");
+            TxtAdminStatus.Foreground = UiBrushProvider.FromHex("#22C55E");
             Append("[INFO] Application lancée avec privilèges administrateur.");
             Append("[INFO] Mode update : GitHub public sans token personnel.");
         }
         else
         {
             TxtAdminStatus.Visibility = Visibility.Visible;
-            TxtAdminStatus.Foreground = BrushFromHex("#EF4444");
+            TxtAdminStatus.Foreground = UiBrushProvider.FromHex("#EF4444");
             _adminBlinkState = true;
             _adminBlinkTimer.Start();
             Append("[WARN] Application lancée sans privilèges administrateur. Certaines optimisations système peuvent être limitées.");
@@ -403,16 +403,11 @@ private void UpdateAdminVisualStatus()
         }
 
         _adminBlinkState = !_adminBlinkState;
-        TxtAdminStatus.Foreground = _adminBlinkState ? BrushFromHex("#EF4444") : BrushFromHex("#7F1D1D");
+        TxtAdminStatus.Foreground = _adminBlinkState ? UiBrushProvider.FromHex("#EF4444") : UiBrushProvider.FromHex("#7F1D1D");
     }
-    private static SolidColorBrush BrushFromHex(string hex)
+private void BtnCancel_Click(object sender, RoutedEventArgs e)
     {
-        return (SolidColorBrush)new BrushConverter().ConvertFromString(hex)!;
-    }
-
-    private void BtnCancel_Click(object sender, RoutedEventArgs e)
-    {
-        BtnCancel.Background = BrushFromHex("#EF4444");
+        BtnCancel.Background = UiBrushProvider.FromHex("#EF4444");
         TxtActionHint.Text = "Annulation demandée.";
         _cts?.Cancel();
         _updateCts?.Cancel();
