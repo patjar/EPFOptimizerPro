@@ -227,19 +227,9 @@ public partial class MainWindow : Window
         TxtAi.AppendText(Environment.NewLine);
         TxtAi.ScrollToHome();
     }
-            private void RenderRecommendations(IReadOnlyList<AiRecommendation> recommendations)
+    private void RenderRecommendations(IReadOnlyList<AiRecommendation> recommendations)
     {
-        TxtAi.Clear();
-        TxtAi.AppendText("Assistant IA local" + Environment.NewLine);
-        TxtAi.AppendText("==================" + Environment.NewLine + Environment.NewLine);
-        TxtAi.AppendText("Lance un audit ou une optimisation pour générer la synthèse IA." + Environment.NewLine + Environment.NewLine);
-
-        foreach (var item in recommendations)
-        {
-            TxtAi.AppendText($"[{item.Severity}] {item.Title}" + Environment.NewLine);
-            TxtAi.AppendText(item.Detail + Environment.NewLine + Environment.NewLine);
-        }
-
+        TxtAi.Text = AiDashboardTextFormatter.FormatRecommendations(recommendations);
         TxtAi.ScrollToHome();
     }
             private void RefreshAiDashboard(double cpuStart, double memoryStart)
@@ -258,7 +248,7 @@ public partial class MainWindow : Window
 
         TxtAiHeadline.Text = $"Santé IA : {health.Global}/100";
         SetDashboardScore(health.Global);
-        TxtAiSubScore.Text = $"Perf {health.Performance} | Sécu {health.Security} | Stockage {health.Storage} | Update {health.WindowsUpdate} | Stabilité {health.Stability}";
+        TxtAiSubScore.Text = AiDashboardTextFormatter.FormatSubScore(health);
 
         var tips = _aiAdvisor.Analyze(
             _engine.Logs.Cast<object>(),
@@ -298,8 +288,8 @@ public partial class MainWindow : Window
 
         TxtAiHeadline.Text = $"Santé IA : {health.Global}/100";
         SetDashboardScore(health.Global);
-        TxtAiSubScore.Text = $"Perf {health.Performance} | Sécu {health.Security} | Stockage {health.Storage} | Update {health.WindowsUpdate} | Stabilité {health.Stability}";
-        TxtAiAdvice.Text = health.Summary + Environment.NewLine + trendText;
+        TxtAiSubScore.Text = AiDashboardTextFormatter.FormatSubScore(health);
+        TxtAiAdvice.Text = AiDashboardTextFormatter.FormatAdvice(health, trendText);
 
         var tips = _aiAdvisor.Analyze(
             _engine.Logs.Cast<object>(),
