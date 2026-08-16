@@ -60,14 +60,14 @@ public partial class MainWindow : Window
 
     private void ShowStartupAdvice()
     {
-        TxtActionHint.Text = "Conseil : lancez Audit seul pour analyser le poste, ou Optimiser pour corriger automatiquement.";
-        TxtStep.Text = "Conseil de démarrage";
+        TxtActionHint.Text = StartupAdviceProvider.ActionHint;
+        TxtStep.Text = StartupAdviceProvider.StepTitle;
         TxtPercent.Text = "0 %";
         ProgressGlobal.Value = 0;
 
         if (TxtAi.Text.Length == 0)
         {
-            TxtAi.Text = "Conseil de démarrage\n\nLancez Audit seul pour obtenir un diagnostic du poste. Utilisez Optimiser quand vous voulez appliquer les corrections automatiquement.\n";
+            TxtAi.Text = StartupAdviceProvider.GetAssistantText();
         }
     }
 
