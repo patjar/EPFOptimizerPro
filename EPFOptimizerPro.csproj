@@ -7,10 +7,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <AssemblyName>EPFOptimizerPro</AssemblyName>
     <RootNamespace>EPFOptimizerPro</RootNamespace>
-    <Version>3.9.68</Version>
-    <AssemblyVersion>3.9.68.0</AssemblyVersion>
-    <FileVersion>3.9.68.0</FileVersion>
-    <InformationalVersion>3.9.68</InformationalVersion>
+    <Version>3.9.69</Version>
+    <AssemblyVersion>3.9.69.0</AssemblyVersion>
+    <FileVersion>3.9.69.0</FileVersion>
+    <InformationalVersion>3.9.69</InformationalVersion>
     <Company>EPF Normandie</Company>
     <Product>EPF Optimizer Pro</Product>
     <Authors>EPF Normandie - Patrick JARDIN</Authors>

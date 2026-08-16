@@ -744,19 +744,19 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
 
         if (score <= 0)
         {
-            TxtScoreHero.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(100, 116, 139));
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex("#64748B");
         }
         else if (score >= 85)
         {
-            TxtScoreHero.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(34, 197, 94));
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex("#22C55E");
         }
         else if (score >= 70)
         {
-            TxtScoreHero.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(245, 158, 11));
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex("#F59E0B");
         }
         else
         {
-            TxtScoreHero.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(239, 68, 68));
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex("#EF4444");
         }
     }
 }
