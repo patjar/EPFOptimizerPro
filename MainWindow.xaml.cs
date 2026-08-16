@@ -535,7 +535,7 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
         BtnCheckUpdate.IsEnabled = false;
         ProgressGlobal.Value = 0;
         TxtPercent.Text = "0 %";
-        TxtStep.Text = "Téléchargement update";
+        TxtStep.Text = UpdateUiTextProvider.DownloadStep;
         TxtUpdateStatus.Text = "Téléchargement du MSI GitHub...";
         Append("[INFO] Téléchargement update : " + _lastUpdateCheck.Asset.Name);
 
@@ -555,7 +555,7 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
             ValidateDownloadedMsi(msiPath);
             Append("[OK] MSI valide : " + msiPath);
             TxtUpdateStatus.Text = "Update téléchargée : " + Path.GetFileName(msiPath);
-            TxtStep.Text = "Update téléchargée";
+            TxtStep.Text = UpdateUiTextProvider.DownloadedStep;
             ProgressGlobal.Value = 100;
             TxtPercent.Text = "100 %";
             Append("[OK] MSI téléchargé : " + msiPath);
@@ -563,7 +563,7 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
             Append("[INFO] Verification signature MSI avant installation...");
             Append("[INFO] Log installation update : " + Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-install.log"));
             TxtUpdateStatus.Text = UpdateStatusFormatter.Format("installation...");
-            TxtStep.Text = "Installation update";
+            TxtStep.Text = UpdateUiTextProvider.InstallStep;
             StartUpdateInstallerAndExit(msiPath);
             return;
         }
