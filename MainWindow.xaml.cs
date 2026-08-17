@@ -436,7 +436,7 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
         catch (Exception ex)
         {
             TxtUpdateStatus.Text = "Mise à jour : erreur GitHub";
-            Append("[ERROR] Erreur GitHub update : " + ex.Message);
+            Append(UpdateLogTextProvider.GitHubUpdateError(ex.Message));
         }
         finally
         {
@@ -558,7 +558,7 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
         TxtPercent.Text = "0 %";
         TxtStep.Text = UpdateUiTextProvider.DownloadStep;
         TxtUpdateStatus.Text = "Téléchargement du MSI GitHub...";
-        Append("[INFO] Téléchargement update : " + _lastUpdateCheck.Asset.Name);
+        Append(UpdateLogTextProvider.DownloadingUpdate(_lastUpdateCheck.Asset.Name));
 
         try
         {
@@ -574,15 +574,15 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
 
             string msiPath = await _updateService.DownloadAsync(_lastUpdateCheck.Asset, progress, _updateCts.Token);
             ValidateDownloadedMsi(msiPath);
-            Append("[OK] MSI valide : " + msiPath);
+            Append(UpdateLogTextProvider.MsiValid(msiPath));
             TxtUpdateStatus.Text = "Update téléchargée : " + Path.GetFileName(msiPath);
             TxtStep.Text = UpdateUiTextProvider.DownloadedStep;
             ProgressGlobal.Value = 100;
             TxtPercent.Text = "100 %";
-            Append("[OK] MSI téléchargé : " + msiPath);
-            Append("[INFO] Installation automatique de l'update...");
-            Append("[INFO] Verification signature MSI avant installation...");
-            Append("[INFO] Log installation update : " + Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-install.log"));
+            Append(UpdateLogTextProvider.MsiDownloaded(msiPath));
+            Append(UpdateLogTextProvider.AutomaticUpdateInstall);
+            Append(UpdateLogTextProvider.VerifyMsiSignatureBeforeInstall);
+            Append(UpdateLogTextProvider.UpdateInstallLogPath(Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-install.log")));
             TxtUpdateStatus.Text = UpdateStatusFormatter.Format("installation...");
             TxtStep.Text = UpdateUiTextProvider.InstallStep;
             StartUpdateInstallerAndExit(msiPath);
@@ -591,12 +591,12 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
         catch (OperationCanceledException)
         {
             TxtUpdateStatus.Text = "Téléchargement update annulé";
-            Append("[WARN] Téléchargement update annulé.");
+            Append(UpdateLogTextProvider.UpdateDownloadCanceled);
         }
         catch (Exception ex)
         {
             TxtUpdateStatus.Text = "Erreur téléchargement update";
-            Append("[ERROR] Erreur téléchargement update : " + ex.Message);
+            Append(UpdateLogTextProvider.UpdateDownloadError(ex.Message));
         }
         finally
         {
