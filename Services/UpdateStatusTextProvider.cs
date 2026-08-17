@@ -26,4 +26,9 @@ public static class UpdateStatusTextProvider
             ? "Mise \u00e0 jour disponible : " + latestVersion
             : "Aucune mise \u00e0 jour disponible";
     }
+
+    public static string NoUpdate(string currentVersion)
+    {
+        return "Mise \u00e0 jour : OK (" + currentVersion + ")";
+    }
 }

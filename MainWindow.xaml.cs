@@ -412,15 +412,15 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
         if (_cts is not null) return;
 
         BtnCheckUpdate.IsEnabled = false;
-        TxtUpdateStatus.Text = "Mise à jour : vérification GitHub...";
+        TxtUpdateStatus.Text = UpdateStatusTextProvider.CheckingGithub;
         Append(UpdateLogTextProvider.CheckingGitHubUpdates);
 
         try
         {
             _lastUpdateCheck = await _updateService.CheckLatestAsync(CancellationToken.None);
             TxtUpdateStatus.Text = _lastUpdateCheck.UpdateAvailable
-                ? $"Mise à jour disponible : {_lastUpdateCheck.LatestVersion}"
-                : $"Mise à jour : OK ({_lastUpdateCheck.CurrentVersion})";
+                ? UpdateStatusTextProvider.CheckResult(true, _lastUpdateCheck.LatestVersion)
+                : UpdateStatusTextProvider.NoUpdate(_lastUpdateCheck.CurrentVersion);
             BtnOpenUpdateRelease.IsEnabled = !string.IsNullOrWhiteSpace(_lastUpdateCheck.ReleaseUrl);
             BtnDownloadUpdate.IsEnabled = _lastUpdateCheck.UpdateAvailable && _lastUpdateCheck.Asset is not null;
 
@@ -435,7 +435,7 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
         }
         catch (Exception ex)
         {
-            TxtUpdateStatus.Text = "Mise à jour : erreur GitHub";
+            TxtUpdateStatus.Text = UpdateStatusTextProvider.GithubError;
             Append(UpdateLogTextProvider.GitHubUpdateError(ex.Message));
         }
         finally
