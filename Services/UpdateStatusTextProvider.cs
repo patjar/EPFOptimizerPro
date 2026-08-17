@@ -15,4 +15,15 @@ public static class UpdateStatusTextProvider
     {
         return UpdateStatusFormatter.Format("installation...");
     }
+
+    public const string CheckingGithub = "Mise \u00e0 jour : v\u00e9rification GitHub...";
+
+    public const string GithubError = "Mise \u00e0 jour : erreur GitHub";
+
+    public static string CheckResult(bool updateAvailable, string latestVersion)
+    {
+        return updateAvailable
+            ? "Mise \u00e0 jour disponible : " + latestVersion
+            : "Aucune mise \u00e0 jour disponible";
+    }
 }
