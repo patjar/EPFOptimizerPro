@@ -334,7 +334,7 @@ public partial class MainWindow : Window
     
     private void ApplyDynamicAppVersion()
     {
-        string displayName = "EPF Optimizer Pro Premium IA v" + ApplicationVersionProvider.GetDisplayVersion();
+        string displayName = ApplicationTitleProvider.CurrentTitle();
         Title = displayName;
         TxtAppVersionTitle.Text = displayName;
     }
