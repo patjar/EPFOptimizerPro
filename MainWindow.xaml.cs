@@ -476,38 +476,58 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
     }
     private void StartUpdateInstallerAndExit(string msiPath)
     {
-        if (string.IsNullOrWhiteSpace(msiPath) || !File.Exists(msiPath))
-        {
-            throw new FileNotFoundException("MSI update introuvable.", msiPath);
-        }
-
-        string exePath = Process.GetCurrentProcess().MainModule?.FileName
-            ?? Path.Combine(AppContext.BaseDirectory, "EPFOptimizerPro.exe");
-
-        string scriptPath = Path.Combine(
-            Path.GetTempPath(),
-            "EPFOptimizerPro-Update-" + DateTime.Now.ToString("yyyyMMdd-HHmmss") + ".ps1");
-
+        int targetPid = Environment.ProcessId;
+        string exePath = Path.Combine(AppContext.BaseDirectory, "EPFOptimizerPro.exe");
         string logPath = Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-install.log");
+        string wrapperLogPath = Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-wrapper.log");
+        string scriptPath = Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-install.ps1");
 
         string script = string.Join(Environment.NewLine, new[]
         {
             "$ErrorActionPreference = 'Stop'",
-            "$targetPid = " + Environment.ProcessId.ToString(),
             "$msi = " + ToPowerShellSingleQuoted(msiPath),
             "$exe = " + ToPowerShellSingleQuoted(exePath),
-            "$log = " + ToPowerShellSingleQuoted(logPath),
-            "$sig = Get-AuthenticodeSignature -FilePath $msi",
-            "if ($sig.Status -ne 'Valid') { throw 'MSI signature invalid: ' + $sig.Status }",
-            "Write-Host ('MSI signature valid: ' + $msi)",
-            "$limit = (Get-Date).AddSeconds(60)",
-            "while ((Get-Process -Id $targetPid -ErrorAction SilentlyContinue) -and ((Get-Date) -lt $limit)) { Start-Sleep -Milliseconds 500 }",
-            "Write-Host ('MSI update path: ' + $msi)",
-            "Write-Host ('MSI log path: ' + $log)",
-            "$p = Start-Process -FilePath 'msiexec.exe' -ArgumentList @('/i', $msi, '/qn', '/norestart', '/L*v', $log) -Wait -PassThru",
-            "Write-Host ('msiexec exit code: ' + $p.ExitCode)",
-            "if ($p.ExitCode -notin @(0,3010)) { throw 'MSI install failed with exit code: ' + $p.ExitCode + ' - log: ' + $log }",
-            "if (Test-Path $exe) { Write-Host ('Relaunching app: ' + $exe); Start-Process -FilePath $exe } else { Write-Host ('App executable not found after install: ' + $exe) }"
+            "$msiLog = " + ToPowerShellSingleQuoted(logPath),
+            "$wrapperLog = " + ToPowerShellSingleQuoted(wrapperLogPath),
+            "$targetPid = " + targetPid.ToString(System.Globalization.CultureInfo.InvariantCulture),
+            "function Write-EpfUpdateLog([string]$message) {",
+            "    $line = '[' + (Get-Date -Format 'yyyy-MM-dd HH:mm:ss') + '] ' + $message",
+            "    Write-Host $line",
+            "    Add-Content -Path $wrapperLog -Value $line -Encoding UTF8",
+            "}",
+            "try {",
+            "    Write-EpfUpdateLog 'EPF update installer wrapper started.'",
+            "    Write-EpfUpdateLog ('MSI path: ' + $msi)",
+            "    Write-EpfUpdateLog ('MSI log path: ' + $msiLog)",
+            "    Write-EpfUpdateLog ('Wrapper log path: ' + $wrapperLog)",
+            "    if (-not (Test-Path $msi)) { throw 'MSI file not found: ' + $msi }",
+            "    $sig = Get-AuthenticodeSignature -FilePath $msi",
+            "    Write-EpfUpdateLog ('MSI signature status: ' + $sig.Status)",
+            "    if ($sig.Status -ne 'Valid') { throw 'MSI signature invalid: ' + $sig.Status }",
+            "    $limit = (Get-Date).AddSeconds(120)",
+            "    while ((Get-Process -Id $targetPid -ErrorAction SilentlyContinue) -and ((Get-Date) -lt $limit)) { Start-Sleep -Milliseconds 500 }",
+            "    Start-Sleep -Seconds 2",
+            "    Write-EpfUpdateLog 'Launching msiexec.'",
+            "    $arguments = @('/i', $msi, '/qn', '/norestart', '/L*v', $msiLog)",
+            "    Write-EpfUpdateLog ('msiexec arguments: ' + ($arguments -join ' '))",
+            "    $p = Start-Process -FilePath 'msiexec.exe' -ArgumentList $arguments -Wait -PassThru",
+            "    Write-EpfUpdateLog ('msiexec exit code: ' + $p.ExitCode)",
+            "    if ($p.ExitCode -notin @(0,3010)) { throw 'MSI install failed with exit code: ' + $p.ExitCode + ' - log: ' + $msiLog }",
+            "    if (Test-Path $exe) { Write-EpfUpdateLog ('Relaunching app: ' + $exe); Start-Process -FilePath $exe } else { Write-EpfUpdateLog ('App executable not found after install: ' + $exe) }",
+            "    Write-EpfUpdateLog 'EPF update installer wrapper finished successfully.'",
+            "    exit 0",
+            "}",
+            "catch {",
+            "    $errorText = $_.Exception.Message",
+            "    Write-EpfUpdateLog ('ERROR: ' + $errorText)",
+            "    Write-Host ''",
+            "    Write-Host 'EPF update failed. The window will stay open so the error can be read.' -ForegroundColor Red",
+            "    Write-Host ('Wrapper log: ' + $wrapperLog) -ForegroundColor Yellow",
+            "    Write-Host ('MSI log    : ' + $msiLog) -ForegroundColor Yellow",
+            "    Write-Host ''",
+            "    Read-Host 'Press Enter to close this window'",
+            "    exit 1",
+            "}"
         });
 
         File.WriteAllText(scriptPath, script, new System.Text.UTF8Encoding(false));
@@ -522,7 +542,6 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
 
         Application.Current.Shutdown();
     }
-
     private static string ToPowerShellSingleQuoted(string value)
     {
         return "'" + value.Replace("'", "''") + "'";
