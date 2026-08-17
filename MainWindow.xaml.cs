@@ -557,7 +557,7 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
         ProgressGlobal.Value = 0;
         TxtPercent.Text = "0 %";
         TxtStep.Text = UpdateUiTextProvider.DownloadStep;
-        TxtUpdateStatus.Text = "Téléchargement du MSI GitHub...";
+        TxtUpdateStatus.Text = UpdateStatusTextProvider.DownloadingGithubMsi;
         Append(UpdateLogTextProvider.DownloadingUpdate(_lastUpdateCheck.Asset.Name));
 
         try
@@ -575,7 +575,7 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
             string msiPath = await _updateService.DownloadAsync(_lastUpdateCheck.Asset, progress, _updateCts.Token);
             ValidateDownloadedMsi(msiPath);
             Append(UpdateLogTextProvider.MsiValid(msiPath));
-            TxtUpdateStatus.Text = "Update téléchargée : " + Path.GetFileName(msiPath);
+            TxtUpdateStatus.Text = UpdateStatusTextProvider.Downloaded(Path.GetFileName(msiPath));
             TxtStep.Text = UpdateUiTextProvider.DownloadedStep;
             ProgressGlobal.Value = 100;
             TxtPercent.Text = "100 %";
@@ -583,19 +583,19 @@ private async void BtnCheckUpdate_Click(object sender, RoutedEventArgs e)
             Append(UpdateLogTextProvider.AutomaticUpdateInstall);
             Append(UpdateLogTextProvider.VerifyMsiSignatureBeforeInstall);
             Append(UpdateLogTextProvider.UpdateInstallLogPath(Path.Combine(Path.GetTempPath(), "EPFOptimizerPro-update-install.log")));
-            TxtUpdateStatus.Text = UpdateStatusFormatter.Format("installation...");
+            TxtUpdateStatus.Text = UpdateStatusTextProvider.Installation();
             TxtStep.Text = UpdateUiTextProvider.InstallStep;
             StartUpdateInstallerAndExit(msiPath);
             return;
         }
         catch (OperationCanceledException)
         {
-            TxtUpdateStatus.Text = "Téléchargement update annulé";
+            TxtUpdateStatus.Text = UpdateStatusTextProvider.UpdateDownloadCanceled;
             Append(UpdateLogTextProvider.UpdateDownloadCanceled);
         }
         catch (Exception ex)
         {
-            TxtUpdateStatus.Text = "Erreur téléchargement update";
+            TxtUpdateStatus.Text = UpdateStatusTextProvider.UpdateDownloadError;
             Append(UpdateLogTextProvider.UpdateDownloadError(ex.Message));
         }
         finally
