@@ -343,7 +343,7 @@ private void UpdateAdminVisualStatus()
     {
         bool isAdmin = SystemPrivilegeService.IsRunningAsAdministrator();
 
-        TxtAdminStatus.Text = isAdmin ? "Admin : oui" : "Admin : non";
+        TxtAdminStatus.Text = AdminStatusTextProvider.Format(isAdmin);
 
         if (isAdmin)
         {
@@ -366,7 +366,7 @@ private void UpdateAdminVisualStatus()
 
     private void AdminBlinkTick()
     {
-        if (TxtAdminStatus.Text != "Admin : non")
+        if (TxtAdminStatus.Text != AdminStatusTextProvider.AdminNo)
         {
             _adminBlinkTimer.Stop();
             TxtAdminStatus.Visibility = Visibility.Visible;
