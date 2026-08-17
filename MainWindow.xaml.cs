@@ -174,20 +174,20 @@ public partial class MainWindow : Window
     private void UpdateDashboardSummary()
     {
         int total = _engine.Tasks.Count;
-        int done = _engine.CompletedTasks.Count(t => t.Status.Equals(TaskStatusTextProvider.Completed, StringComparison.OrdinalIgnoreCase));
-        int running = _engine.ActiveTasks.Count(t => t.Status.Equals(TaskStatusTextProvider.Running, StringComparison.OrdinalIgnoreCase));
-        int waiting = _engine.ActiveTasks.Count(t => t.Status.Equals(TaskStatusTextProvider.Waiting, StringComparison.OrdinalIgnoreCase));
-        int warn = _engine.CompletedTasks.Count(t => t.Status.Equals(TaskStatusTextProvider.Warning, StringComparison.OrdinalIgnoreCase));
-        int error = _engine.CompletedTasks.Count(t => t.Status.Equals(TaskStatusTextProvider.Error, StringComparison.OrdinalIgnoreCase));
-        string activeNames = string.Join(", ", _engine.ActiveTasks.Where(t => t.Status.Equals(TaskStatusTextProvider.Running, StringComparison.OrdinalIgnoreCase)).Select(t => $"{t.Name} {t.Progress}%"));
+        int done = _engine.CompletedTasks.Count(t => TaskStatusTextProvider.IsCompleted(t.Status));
+        int running = _engine.ActiveTasks.Count(t => TaskStatusTextProvider.IsRunning(t.Status));
+        int waiting = _engine.ActiveTasks.Count(t => TaskStatusTextProvider.IsWaiting(t.Status));
+        int warn = _engine.CompletedTasks.Count(t => TaskStatusTextProvider.IsWarning(t.Status));
+        int error = _engine.CompletedTasks.Count(t => TaskStatusTextProvider.IsError(t.Status));
+        string activeNames = string.Join(", ", _engine.ActiveTasks.Where(t => TaskStatusTextProvider.IsRunning(t.Status)).Select(t => $"{t.Name} {t.Progress}%"));
         if (string.IsNullOrWhiteSpace(activeNames))
         {
             activeNames = "aucune tâche active";
         }
 
         bool hasActiveVisibleTasks = _engine.ActiveTasks.Any(t =>
-            t.Status.Equals(TaskStatusTextProvider.Running, StringComparison.OrdinalIgnoreCase) ||
-            t.Status.Equals(TaskStatusTextProvider.Waiting, StringComparison.OrdinalIgnoreCase));
+            TaskStatusTextProvider.IsRunning(t.Status) ||
+            TaskStatusTextProvider.IsWaiting(t.Status));
 
         TxtNoActiveTasks.Visibility = hasActiveVisibleTasks
             ? Visibility.Collapsed
