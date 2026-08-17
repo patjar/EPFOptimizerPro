@@ -192,7 +192,7 @@ public partial class MainWindow : Window
         TxtNoActiveTasks.Visibility = hasActiveVisibleTasks
             ? Visibility.Collapsed
             : Visibility.Visible;
-        TxtDashboardSummary.Text = $"  |  {done}/{total} terminées  |  {running} en cours : {activeNames}  |  {waiting} attente  |  {warn} avert.  |  {error} erreur";
+        TxtDashboardSummary.Text = DashboardSummaryTextProvider.Format(done, total, running, activeNames, waiting, warn, error);
     }
 
 
