@@ -328,7 +328,7 @@ public partial class MainWindow : Window
     private void UpdateScoreHero(int score)
     {
         TxtScoreHero.Text = score.ToString();
-        TxtScoreHero.Foreground = score >= 85 ? UiBrushProvider.FromHex("#22C55E") : score >= 65 ? UiBrushProvider.FromHex("#F59E0B") : UiBrushProvider.FromHex("#EF4444");
+        TxtScoreHero.Foreground = score >= 85 ? UiBrushProvider.FromHex(AdminStatusColorProvider.AdminOk) : score >= 65 ? UiBrushProvider.FromHex("#F59E0B") : UiBrushProvider.FromHex(AdminStatusColorProvider.AdminError);
     }
 
     
@@ -349,14 +349,14 @@ private void UpdateAdminVisualStatus()
         {
             _adminBlinkTimer.Stop();
             TxtAdminStatus.Visibility = Visibility.Visible;
-            TxtAdminStatus.Foreground = UiBrushProvider.FromHex("#22C55E");
+            TxtAdminStatus.Foreground = UiBrushProvider.FromHex(AdminStatusColorProvider.AdminOk);
             Append(AppLogTextProvider.AdminLaunch);
             Append(UpdateLogTextProvider.PublicGitHubMode);
         }
         else
         {
             TxtAdminStatus.Visibility = Visibility.Visible;
-            TxtAdminStatus.Foreground = UiBrushProvider.FromHex("#EF4444");
+            TxtAdminStatus.Foreground = UiBrushProvider.FromHex(AdminStatusColorProvider.AdminError);
             _adminBlinkState = true;
             _adminBlinkTimer.Start();
             Append(AppLogTextProvider.NonAdminLaunch);
@@ -374,11 +374,11 @@ private void UpdateAdminVisualStatus()
         }
 
         _adminBlinkState = !_adminBlinkState;
-        TxtAdminStatus.Foreground = _adminBlinkState ? UiBrushProvider.FromHex("#EF4444") : UiBrushProvider.FromHex("#7F1D1D");
+        TxtAdminStatus.Foreground = _adminBlinkState ? UiBrushProvider.FromHex(AdminStatusColorProvider.AdminError) : UiBrushProvider.FromHex(AdminStatusColorProvider.AdminBlinkDim);
     }
 private void BtnCancel_Click(object sender, RoutedEventArgs e)
     {
-        BtnCancel.Background = UiBrushProvider.FromHex("#EF4444");
+        BtnCancel.Background = UiBrushProvider.FromHex(AdminStatusColorProvider.AdminError);
         TxtActionHint.Text = ActionStatusTextProvider.CancellationRequested;
         _cts?.Cancel();
         _updateCts?.Cancel();
@@ -671,7 +671,7 @@ private void SetDashboardScore(int score)
         }
         else if (score >= 85)
         {
-            TxtScoreHero.Foreground = UiBrushProvider.FromHex("#22C55E");
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex(AdminStatusColorProvider.AdminOk);
         }
         else if (score >= 70)
         {
@@ -679,7 +679,7 @@ private void SetDashboardScore(int score)
         }
         else
         {
-            TxtScoreHero.Foreground = UiBrushProvider.FromHex("#EF4444");
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex(AdminStatusColorProvider.AdminError);
         }
     }
 }
