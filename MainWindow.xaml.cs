@@ -328,7 +328,7 @@ public partial class MainWindow : Window
     private void UpdateScoreHero(int score)
     {
         TxtScoreHero.Text = score.ToString();
-        TxtScoreHero.Foreground = score >= 85 ? UiBrushProvider.FromHex(AdminStatusColorProvider.AdminOk) : score >= 65 ? UiBrushProvider.FromHex("#F59E0B") : UiBrushProvider.FromHex(AdminStatusColorProvider.AdminError);
+        TxtScoreHero.Foreground = score >= 85 ? UiBrushProvider.FromHex(ScoreColorProvider.Good) : score >= 65 ? UiBrushProvider.FromHex(ScoreColorProvider.Warning) : UiBrushProvider.FromHex(ScoreColorProvider.Error);
     }
 
     
@@ -667,19 +667,19 @@ private void SetDashboardScore(int score)
 
         if (score <= 0)
         {
-            TxtScoreHero.Foreground = UiBrushProvider.FromHex("#64748B");
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex(ScoreColorProvider.Unknown);
         }
         else if (score >= 85)
         {
-            TxtScoreHero.Foreground = UiBrushProvider.FromHex(AdminStatusColorProvider.AdminOk);
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex(ScoreColorProvider.Good);
         }
         else if (score >= 70)
         {
-            TxtScoreHero.Foreground = UiBrushProvider.FromHex("#F59E0B");
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex(ScoreColorProvider.Warning);
         }
         else
         {
-            TxtScoreHero.Foreground = UiBrushProvider.FromHex(AdminStatusColorProvider.AdminError);
+            TxtScoreHero.Foreground = UiBrushProvider.FromHex(ScoreColorProvider.Error);
         }
     }
 }
