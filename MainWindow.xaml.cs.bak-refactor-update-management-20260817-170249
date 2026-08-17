@@ -687,10 +687,275 @@ private void SetDashboardScore(int score)
     {
         e.Handled = true;
 
-        if (sender is not System.Windows.FrameworkElement element)
+        if (sender is not System.Windows.FrameworkElement element || element.DataContext is null)
         {
             return;
         }
 
-        EPFOptimizerPro.Services.UpdateTaskWindowLauncher.ShowIfUpdateTask(this, element.DataContext);
+        object task = element.DataContext;
+        string name = ReadUpdateActionTaskValue(task, "Name");
+
+        bool isUpdateTask = name.Equals("Updates", StringComparison.OrdinalIgnoreCase)
+            || name.Contains("update", StringComparison.OrdinalIgnoreCase)
+            || name.Contains("mise", StringComparison.OrdinalIgnoreCase);
+
+        if (!isUpdateTask)
+        {
+            return;
+        }
+
+        ShowUpdateActionsWindow(task);
+    }
+
+    private void ShowUpdateActionsWindow(object task)
+    {
+        string name = ReadUpdateActionTaskValue(task, "Name");
+        string status = ReadUpdateActionTaskValue(task, "Status");
+        string progress = ReadUpdateActionTaskValue(task, "Progress");
+        string message = ReadUpdateActionTaskValue(task, "Message");
+
+        var window = new System.Windows.Window
+        {
+            Title = "Gestion des mises a jour",
+            Width = 820,
+            Height = 430,
+            MinWidth = 760,
+            MinHeight = 360,
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner,
+            Owner = this,
+            ResizeMode = System.Windows.ResizeMode.CanResize
+        };
+
+        var root = new System.Windows.Controls.DockPanel
+        {
+            Margin = new System.Windows.Thickness(18)
+        };
+
+        var title = new System.Windows.Controls.TextBlock
+        {
+            Text = "Gestion des mises a jour",
+            FontSize = 22,
+            FontWeight = System.Windows.FontWeights.Bold,
+            Margin = new System.Windows.Thickness(0, 0, 0, 10)
+        };
+        System.Windows.Controls.DockPanel.SetDock(title, System.Windows.Controls.Dock.Top);
+        root.Children.Add(title);
+
+        var buttons = new System.Windows.Controls.StackPanel
+        {
+            Orientation = System.Windows.Controls.Orientation.Horizontal,
+            HorizontalAlignment = System.Windows.HorizontalAlignment.Right,
+            Margin = new System.Windows.Thickness(0, 14, 0, 0)
+        };
+        System.Windows.Controls.DockPanel.SetDock(buttons, System.Windows.Controls.Dock.Bottom);
+
+        var btnWindowsDetails = new System.Windows.Controls.Button
+        {
+            Content = "Voir les updates Windows",
+            MinWidth = 180,
+            Margin = new System.Windows.Thickness(0, 0, 10, 0),
+            Padding = new System.Windows.Thickness(12, 8, 12, 8)
+        };
+        btnWindowsDetails.Click += (_, _) => StartUpdateActionPowerShell("Details Windows Update", BuildWindowsUpdateDetailsScript());
+        buttons.Children.Add(btnWindowsDetails);
+        var btnWindowsInstall = new System.Windows.Controls.Button
+        {
+            Content = "Installer Windows Update",
+            MinWidth = 190,
+            Margin = new System.Windows.Thickness(0, 0, 10, 0),
+            Padding = new System.Windows.Thickness(12, 8, 12, 8)
+        };
+        btnWindowsInstall.Click += (_, _) => StartUpdateActionPowerShell("Installer Windows Update", BuildWindowsUpdateInstallScript());
+        buttons.Children.Add(btnWindowsInstall);
+
+        var btnStoreUpdate = new System.Windows.Controls.Button
+        {
+            Content = "Lancer update Microsoft Store",
+            MinWidth = 220,
+            Margin = new System.Windows.Thickness(0, 0, 10, 0),
+            Padding = new System.Windows.Thickness(12, 8, 12, 8)
+        };
+        btnStoreUpdate.Click += (_, _) => StartUpdateActionPowerShell("Update Microsoft Store", BuildMicrosoftStoreUpdateScript());
+        buttons.Children.Add(btnStoreUpdate);
+
+        var btnClose = new System.Windows.Controls.Button
+        {
+            Content = "Fermer",
+            MinWidth = 100,
+            Padding = new System.Windows.Thickness(12, 8, 12, 8)
+        };
+        btnClose.Click += (_, _) => window.Close();
+        buttons.Children.Add(btnClose);
+
+        root.Children.Add(buttons);
+
+        string body =
+            "Tache : " + name + Environment.NewLine +
+            "Statut : " + status + Environment.NewLine +
+            "Progression : " + progress + " %" + Environment.NewLine +
+            Environment.NewLine +
+            "Resultat actuel de l'audit :" + Environment.NewLine +
+            (string.IsNullOrWhiteSpace(message) ? "Aucun detail disponible." : message) + Environment.NewLine +
+            Environment.NewLine +
+            "Actions disponibles :" + Environment.NewLine +
+            "- Voir les updates Windows : ouvre une console avec le detail des mises a jour detectees." + Environment.NewLine +
+            "- Lancer update Microsoft Store : lance winget upgrade --all --source msstore.";
+
+        var text = new System.Windows.Controls.TextBox
+        {
+            Text = body,
+            IsReadOnly = true,
+            TextWrapping = System.Windows.TextWrapping.Wrap,
+            VerticalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = System.Windows.Controls.ScrollBarVisibility.Disabled,
+            FontFamily = new System.Windows.Media.FontFamily("Consolas"),
+            FontSize = 13,
+            Padding = new System.Windows.Thickness(10)
+        };
+
+        root.Children.Add(text);
+        window.Content = root;
+        window.ShowDialog();
+    }
+
+    private static string ReadUpdateActionTaskValue(object task, string propertyName)
+    {
+        object? value = task.GetType().GetProperty(propertyName)?.GetValue(task);
+        return value?.ToString() ?? string.Empty;
+    }
+
+    private void StartUpdateActionPowerShell(string title, string script)
+    {
+        try
+        {
+            string header =
+                "$Host.UI.RawUI.WindowTitle = 'EPFOptimizerPro - " + title.Replace("'", "") + "';" + Environment.NewLine +
+                "Write-Host 'EPFOptimizerPro - " + title.Replace("'", "") + "' -ForegroundColor Cyan;" + Environment.NewLine +
+                "Write-Host '';" + Environment.NewLine;
+
+            string footer =
+                Environment.NewLine +
+                "Write-Host '';" + Environment.NewLine +
+                "Read-Host 'Appuie sur Entree pour fermer'";
+
+            string encoded = Convert.ToBase64String(System.Text.Encoding.Unicode.GetBytes(header + script + footer));
+
+            var startInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "powershell.exe",
+                Arguments = "-NoExit -ExecutionPolicy Bypass -EncodedCommand " + encoded,
+                UseShellExecute = true,
+                WorkingDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
+            };
+
+            System.Diagnostics.Process.Start(startInfo);
+        }
+        catch (Exception ex)
+        {
+            System.Windows.MessageBox.Show(this,
+                "Impossible de lancer l'action." + Environment.NewLine + ex.Message,
+                "Gestion des mises a jour",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
+        }
+    }
+
+    private static string BuildWindowsUpdateDetailsScript()
+    {
+        return string.Join(Environment.NewLine, new[]
+        {
+            "$ErrorActionPreference = 'Continue'",
+            "try {",
+            "    $session = New-Object -ComObject Microsoft.Update.Session",
+            "    $searcher = $session.CreateUpdateSearcher()",
+            "    $result = $searcher.Search('IsInstalled=0 and IsHidden=0')",
+            "    Write-Host ('Windows Update : ' + $result.Updates.Count + ' update(s) detectee(s)') -ForegroundColor Yellow",
+            "    Write-Host ''",
+            "    if ($result.Updates.Count -eq 0) { Write-Host 'Aucune mise a jour Windows disponible.'; return }",
+            "    for ($i = 0; $i -lt $result.Updates.Count; $i++) {",
+            "        $update = $result.Updates.Item($i)",
+            "        Write-Host ('[' + ($i + 1) + '] ' + $update.Title) -ForegroundColor White",
+            "        if ($update.KBArticleIDs.Count -gt 0) { Write-Host ('    KB : ' + (($update.KBArticleIDs | ForEach-Object { 'KB' + $_ }) -join ', ')) }",
+            "        Write-Host ('    Type : ' + $update.Type)",
+            "        Write-Host ('    Taille approx : ' + [math]::Round(($update.MaxDownloadSize / 1MB), 2) + ' Mo')",
+            "        Write-Host ''",
+            "    }",
+            "}",
+            "catch {",
+            "    Write-Host 'Erreur pendant la lecture Windows Update :' -ForegroundColor Red",
+            "    Write-Host $_.Exception.Message -ForegroundColor Red",
+            "}"
+        });
+    }
+
+    private static string BuildWindowsUpdateInstallScript()
+    {
+        return string.Join(Environment.NewLine, new[]
+        {
+            "$ErrorActionPreference = 'Continue'",
+            "try {",
+            "    $session = New-Object -ComObject Microsoft.Update.Session",
+            "    $searcher = $session.CreateUpdateSearcher()",
+            "    $result = $searcher.Search('IsInstalled=0 and IsHidden=0')",
+            "    Write-Host ('Windows Update : ' + $result.Updates.Count + ' update(s) detectee(s)') -ForegroundColor Yellow",
+            "    Write-Host ''",
+            "    if ($result.Updates.Count -eq 0) { Write-Host 'Aucune mise a jour Windows disponible.' -ForegroundColor Green; return }",
+            "    $updatesToInstall = New-Object -ComObject Microsoft.Update.UpdateColl",
+            "    for ($i = 0; $i -lt $result.Updates.Count; $i++) {",
+            "        $update = $result.Updates.Item($i)",
+            "        Write-Host ('[' + ($i + 1) + '] ' + $update.Title) -ForegroundColor White",
+            "        if ($update.KBArticleIDs.Count -gt 0) { Write-Host ('    KB : ' + (($update.KBArticleIDs | ForEach-Object { 'KB' + $_ }) -join ', ')) }",
+            "        Write-Host ('    Type : ' + $update.Type)",
+            "        Write-Host ('    Taille approx : ' + [math]::Round(($update.MaxDownloadSize / 1MB), 2) + ' Mo')",
+            "        if (-not $update.EulaAccepted) { try { $update.AcceptEula() } catch {} }",
+            "        [void]$updatesToInstall.Add($update)",
+            "        Write-Host ''",
+            "    }",
+            "    Write-Host 'Cette action va telecharger puis installer les mises a jour Windows listees ci-dessus.' -ForegroundColor Yellow",
+            "    $answer = Read-Host 'Continuer ? Tape O puis Entree pour confirmer'",
+            "    if ($answer -notin @('O','o','Oui','oui','Y','y','Yes','yes')) { Write-Host 'Installation annulee par utilisateur.' -ForegroundColor Yellow; return }",
+            "    Write-Host ''",
+            "    Write-Host 'Telechargement Windows Update...' -ForegroundColor Yellow",
+            "    $downloader = $session.CreateUpdateDownloader()",
+            "    $downloader.Updates = $updatesToInstall",
+            "    $downloadResult = $downloader.Download()",
+            "    Write-Host ('Resultat telechargement : ' + $downloadResult.ResultCode)",
+            "    Write-Host ''",
+            "    Write-Host 'Installation Windows Update...' -ForegroundColor Yellow",
+            "    $installer = $session.CreateUpdateInstaller()",
+            "    $installer.Updates = $updatesToInstall",
+            "    $installResult = $installer.Install()",
+            "    Write-Host ('Resultat installation : ' + $installResult.ResultCode) -ForegroundColor Green",
+            "    Write-Host ('Redemarrage requis : ' + $installResult.RebootRequired)",
+            "    Write-Host ''",
+            "    for ($i = 0; $i -lt $updatesToInstall.Count; $i++) {",
+            "        $updateResult = $installResult.GetUpdateResult($i)",
+            "        Write-Host ('[' + ($i + 1) + '] ' + $updatesToInstall.Item($i).Title)",
+            "        Write-Host ('    Resultat : ' + $updateResult.ResultCode + ' / HResult : ' + $updateResult.HResult)",
+            "    }",
+            "}",
+            "catch {",
+            "    Write-Host 'Erreur pendant installation Windows Update :' -ForegroundColor Red",
+            "    Write-Host $_.Exception.Message -ForegroundColor Red",
+            "}"
+        });
+    }
+    private static string BuildMicrosoftStoreUpdateScript()
+    {
+        return string.Join(Environment.NewLine, new[]
+        {
+            "$ErrorActionPreference = 'Continue'",
+            "$winget = Get-Command winget -ErrorAction SilentlyContinue",
+            "if ($null -eq $winget) {",
+            "    Write-Host 'winget est introuvable sur ce poste.' -ForegroundColor Red",
+            "    return",
+            "}",
+            "Write-Host 'Recherche des mises a jour Microsoft Store...' -ForegroundColor Yellow",
+            "winget upgrade --source msstore --accept-source-agreements --disable-interactivity",
+            "Write-Host ''",
+            "Write-Host 'Lancement des mises a jour Microsoft Store...' -ForegroundColor Yellow",
+            "winget upgrade --all --source msstore --accept-source-agreements --accept-package-agreements --disable-interactivity",
+            "Write-Host ''",
+            "Write-Host 'Action Microsoft Store terminee.' -ForegroundColor Green"
+        });
     }}

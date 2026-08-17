@@ -499,7 +499,7 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border MouseLeftButtonUp="CompletedTaskItem_MouseLeftButtonUp" Cursor="Hand" Width="46" Height="46" CornerRadius="23" Background="#FFFFFF" BorderBrush="#0F3B7A" BorderThickness="2" Margin="0,0,10,0">
+                                    <Border Width="46" Height="46" CornerRadius="23" Background="#FFFFFF" BorderBrush="#0F3B7A" BorderThickness="2" Margin="0,0,10,0">
                                         <Border.ToolTip>
                                             <StackPanel MaxWidth="280">
                                                 <TextBlock Text="{Binding Name}" FontWeight="Bold"/>

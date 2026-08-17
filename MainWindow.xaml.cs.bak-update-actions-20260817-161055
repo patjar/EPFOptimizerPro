@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -682,15 +682,4 @@ private void SetDashboardScore(int score)
             TxtScoreHero.Foreground = UiBrushProvider.FromHex(ScoreColorProvider.Error);
         }
     }
-
-    private void CompletedTaskItem_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-    {
-        e.Handled = true;
-
-        if (sender is not System.Windows.FrameworkElement element)
-        {
-            return;
-        }
-
-        EPFOptimizerPro.Services.UpdateTaskWindowLauncher.ShowIfUpdateTask(this, element.DataContext);
-    }}
+}
