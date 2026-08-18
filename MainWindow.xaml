@@ -500,6 +500,32 @@
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border MouseLeftButtonUp="CompletedTaskItem_MouseLeftButtonUp" Cursor="Hand" Width="46" Height="46" CornerRadius="23" Background="#FFFFFF" BorderBrush="#0F3B7A" BorderThickness="2" Margin="0,0,10,0">
+                            <Border.Style>
+                                <Style TargetType="{x:Type Border}">
+                                    <Setter Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect Color="#2563EB" BlurRadius="0" ShadowDepth="0" Opacity="0"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Name}" Value="Updates">
+                                            <DataTrigger.EnterActions>
+                                                <BeginStoryboard x:Name="UpdateHaloPulseStoryboard">
+                                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                                         From="0" To="18" Duration="0:0:0.9"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                                         From="0.15" To="0.9" Duration="0:0:0.9"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </DataTrigger.EnterActions>
+                                            <DataTrigger.ExitActions>
+                                                <StopStoryboard BeginStoryboardName="UpdateHaloPulseStoryboard"/>
+                                            </DataTrigger.ExitActions>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                                         <Border.ToolTip>
                                             <StackPanel MaxWidth="280">
                                                 <TextBlock Text="{Binding Name}" FontWeight="Bold"/>
