@@ -54,7 +54,7 @@ public static class UpdateActionScriptService
             "    $result = $searcher.Search('IsInstalled=0 and IsHidden=0')",
             "    Write-Host ('Windows Update : ' + $result.Updates.Count + ' update(s) detectee(s)') -ForegroundColor Yellow",
             "    Write-Host ''",
-            "    if ($result.Updates.Count -eq 0) { Write-Host 'Aucune mise a jour Windows disponible.'; return }",
+            "    if ($result.Updates.Count -eq 0) { Write-Host 'Aucune mise a jour Windows disponible.' -ForegroundColor Green; return }",
             "    for ($i = 0; $i -lt $result.Updates.Count; $i++) {",
             "        $update = $result.Updates.Item($i)",
             "        Write-Host ('[' + ($i + 1) + '] ' + $update.Title) -ForegroundColor White",
@@ -124,23 +124,56 @@ public static class UpdateActionScriptService
         });
     }
 
-    public static string BuildMicrosoftStoreUpdateScript()
+    public static string BuildWingetAppsListScript()
     {
         return string.Join(Environment.NewLine, new[]
         {
             "$ErrorActionPreference = 'Continue'",
             "$winget = Get-Command winget -ErrorAction SilentlyContinue",
-            "if ($null -eq $winget) {",
-            "    Write-Host 'winget est introuvable sur ce poste.' -ForegroundColor Red",
-            "    return",
-            "}",
-            "Write-Host 'Recherche des mises a jour Microsoft Store...' -ForegroundColor Yellow",
-            "winget upgrade --source msstore --accept-source-agreements --disable-interactivity",
+            "if ($null -eq $winget) { Write-Host 'winget est introuvable sur ce poste.' -ForegroundColor Red; return }",
+            "Write-Host 'Mise a jour de la source winget...' -ForegroundColor Yellow",
+            "winget source update --name winget --disable-interactivity",
             "Write-Host ''",
-            "Write-Host 'Lancement des mises a jour Microsoft Store...' -ForegroundColor Yellow",
-            "winget upgrade --all --source msstore --accept-source-agreements --accept-package-agreements --disable-interactivity",
+            "Write-Host 'Applications avec mises a jour disponibles via winget :' -ForegroundColor Yellow",
+            "winget upgrade --source winget --accept-source-agreements --disable-interactivity"
+        });
+    }
+
+    public static string BuildWingetAppsUpdateScript()
+    {
+        return string.Join(Environment.NewLine, new[]
+        {
+            "$ErrorActionPreference = 'Continue'",
+            "$winget = Get-Command winget -ErrorAction SilentlyContinue",
+            "if ($null -eq $winget) { Write-Host 'winget est introuvable sur ce poste.' -ForegroundColor Red; return }",
+            "Write-Host 'Mise a jour de la source winget...' -ForegroundColor Yellow",
+            "winget source update --name winget --disable-interactivity",
             "Write-Host ''",
-            "Write-Host 'Action Microsoft Store terminee.' -ForegroundColor Green"
+            "Write-Host 'Applications detectees :' -ForegroundColor Yellow",
+            "winget upgrade --source winget --accept-source-agreements --disable-interactivity",
+            "Write-Host ''",
+            "Write-Host 'Cette action va installer toutes les mises a jour applicatives winget listees ci-dessus.' -ForegroundColor Yellow",
+            "$answer = Read-Host 'Continuer ? Tape O puis Entree pour confirmer'",
+            "if ($answer -notin @('O','o','Oui','oui','Y','y','Yes','yes')) { Write-Host 'Installation annulee par utilisateur.' -ForegroundColor Yellow; return }",
+            "Write-Host ''",
+            "Write-Host 'Installation des mises a jour applicatives winget...' -ForegroundColor Yellow",
+            "winget upgrade --all --source winget --accept-source-agreements --accept-package-agreements --disable-interactivity",
+            "Write-Host ''",
+            "Write-Host 'Action winget terminee.' -ForegroundColor Green"
+        });
+    }
+
+    public static string BuildMicrosoftStoreOpenScript()
+    {
+        return string.Join(Environment.NewLine, new[]
+        {
+            "$ErrorActionPreference = 'Continue'",
+            "Write-Host 'Ouverture de Microsoft Store sur la page des mises a jour...' -ForegroundColor Yellow",
+            "try { Start-Process 'ms-windows-store://downloadsandupdates' }",
+            "catch {",
+            "    Write-Host 'Impossible d ouvrir la page directe des mises a jour. Ouverture du Microsoft Store.' -ForegroundColor Yellow",
+            "    Start-Process 'ms-windows-store:'",
+            "}"
         });
     }
 }
