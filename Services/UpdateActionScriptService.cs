@@ -163,6 +163,30 @@ public static class UpdateActionScriptService
         });
     }
 
+    public static string BuildWingetUnknownAppsUpdateScript()
+    {
+        return string.Join(Environment.NewLine, new[]
+        {
+            "$ErrorActionPreference = 'Continue'",
+            "$winget = Get-Command winget -ErrorAction SilentlyContinue",
+            "if ($null -eq $winget) { Write-Host 'winget est introuvable sur ce poste.' -ForegroundColor Red; return }",
+            "Write-Host 'Mise a jour de la source winget...' -ForegroundColor Yellow",
+            "winget source update --name winget --disable-interactivity",
+            "Write-Host ''",
+            "Write-Host 'Applications incluant les versions inconnues :' -ForegroundColor Yellow",
+            "winget upgrade --source winget --include-unknown --accept-source-agreements --disable-interactivity",
+            "Write-Host ''",
+            "Write-Host 'Cette action va tenter de mettre a jour les applications winget, y compris celles dont la version est inconnue.' -ForegroundColor Yellow",
+            "Write-Host 'A utiliser quand winget indique : Utilisez --include-unknown pour afficher tous les resultats.' -ForegroundColor Yellow",
+            "$answer = Read-Host 'Continuer ? Tape O puis Entree pour confirmer'",
+            "if ($answer -notin @('O','o','Oui','oui','Y','y','Yes','yes')) { Write-Host 'Resolution annulee par utilisateur.' -ForegroundColor Yellow; return }",
+            "Write-Host ''",
+            "Write-Host 'Resolution des updates inconnues winget...' -ForegroundColor Yellow",
+            "winget upgrade --all --source winget --include-unknown --accept-source-agreements --accept-package-agreements --disable-interactivity",
+            "Write-Host ''",
+            "Write-Host 'Action winget include-unknown terminee.' -ForegroundColor Green"
+        });
+    }
     public static string BuildMicrosoftStoreOpenScript()
     {
         return string.Join(Environment.NewLine, new[]

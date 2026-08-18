@@ -49,7 +49,8 @@ public sealed class UpdateManagementWindow : Window
         AddSection(actions, "Applications winget", new[]
         {
             CreateButton("Voir les updates applications", 230, (_, _) => UpdateActionScriptService.StartPowerShell(this, "Updates applications winget", UpdateActionScriptService.BuildWingetAppsListScript())),
-            CreateButton("Installer les updates applications", 260, (_, _) => UpdateActionScriptService.StartPowerShell(this, "Installer updates applications winget", UpdateActionScriptService.BuildWingetAppsUpdateScript()))
+            CreateButton("Installer les updates applications", 260, (_, _) => UpdateActionScriptService.StartPowerShell(this, "Installer updates applications winget", UpdateActionScriptService.BuildWingetAppsUpdateScript())),
+            CreateButton("Résoudre updates inconnues", 240, (_, _) => UpdateActionScriptService.StartPowerShell(this, "Résoudre updates inconnues winget", UpdateActionScriptService.BuildWingetUnknownAppsUpdateScript()))
         });
 
         AddSection(actions, "Microsoft Store", new[]
@@ -75,6 +76,7 @@ public sealed class UpdateManagementWindow : Window
             "Organisation :" + Environment.NewLine +
             "- Windows Update : mises a jour systeme et Defender." + Environment.NewLine +
             "- Applications winget : applications classiques gerees par winget." + Environment.NewLine +
+            "- Updates inconnues : utilise winget --include-unknown pour inclure les versions non determinees." + Environment.NewLine +
             "- Microsoft Store : ouverture du Store pour les mises a jour natives.";
 
         var text = new TextBox
