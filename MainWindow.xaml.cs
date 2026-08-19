@@ -29,6 +29,10 @@ public partial class MainWindow : Window
     private int _frameIndex;
     private int _lastWorkerCount;
     private string _lastWorkerMode = "non initialise";
+    private DateTime _lastDashboardRefreshUtc = DateTime.MinValue;
+    private DateTime _lastSystemCountersRefreshUtc = DateTime.MinValue;
+    private static readonly TimeSpan DashboardRefreshInterval = TimeSpan.FromSeconds(5);
+    private static readonly TimeSpan SystemCountersRefreshInterval = TimeSpan.FromSeconds(5);
     private string? _lastReport;
 
     public MainWindow()
@@ -103,20 +107,32 @@ public partial class MainWindow : Window
             Dispatcher.Invoke(() => TxtWorkers.Text = $"Workers : {count} | {mode}");
         };
     }
-
     private void Tick()
     {
         _frameIndex = (_frameIndex + 1) % _frames.Length;
         double cpu = _metrics.CpuPercent();
         double ram = _metrics.MemoryPercent();
+
         TxtClock.Text = $"{_frames[_frameIndex]} {DateTime.Now:HH:mm:ss}";
         TxtMetrics.Text = $"CPU {cpu:0} % | RAM {ram:0} %";
         ProgressCpuMini.Value = cpu;
         ProgressRamMini.Value = ram;
         TxtCpuCard.Text = $"{cpu:0} %";
         TxtRamCard.Text = $"{ram:0} %";
-        UpdateDashboardSummary();
-        UpdateSystemCounters();
+
+        DateTime nowUtc = DateTime.UtcNow;
+
+        if (nowUtc - _lastDashboardRefreshUtc >= DashboardRefreshInterval)
+        {
+            UpdateDashboardSummary();
+            _lastDashboardRefreshUtc = nowUtc;
+        }
+
+        if (nowUtc - _lastSystemCountersRefreshUtc >= SystemCountersRefreshInterval)
+        {
+            UpdateSystemCounters();
+            _lastSystemCountersRefreshUtc = nowUtc;
+        }
     }
 
     private async void BtnAudit_Click(object sender, RoutedEventArgs e) => await RunAsync(false);
