@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using System.Net.Http;
 using System.Reflection;
 using System.Text.Json;
@@ -36,7 +36,7 @@ public sealed class GitHubUpdateService
         }
 
         var candidates = releases
-            .Where(r => !r.Draft)
+            .Where(r => !r.Draft && !r.Prerelease && !IsPreviewRelease(r))
             .Select(r => new { Release = r, Asset = FindEpfUpdateAsset(r), Version = TryNormalizeVersion(r.TagName) })
             .Where(x => x.Asset is not null && x.Version is not null)
             .OrderByDescending(x => x.Version)
@@ -182,6 +182,20 @@ public sealed class GitHubUpdateService
         };
     }
 
+    private static bool IsPreviewRelease(GitHubRelease release)
+    {
+        string tag = release.TagName ?? string.Empty;
+        string name = release.Name ?? string.Empty;
+        string combined = tag + " " + name;
+
+        return combined.Contains("preview", StringComparison.OrdinalIgnoreCase)
+            || combined.Contains("pre-release", StringComparison.OrdinalIgnoreCase)
+            || combined.Contains("prerelease", StringComparison.OrdinalIgnoreCase)
+            || combined.Contains("beta", StringComparison.OrdinalIgnoreCase)
+            || combined.Contains("alpha", StringComparison.OrdinalIgnoreCase)
+            || combined.Contains("-rc", StringComparison.OrdinalIgnoreCase)
+            || combined.Contains(" rc", StringComparison.OrdinalIgnoreCase);
+    }
     private static GitHubAsset? FindEpfUpdateAsset(GitHubRelease release)
     {
         return release.Assets.FirstOrDefault(a =>
