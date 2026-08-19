@@ -491,7 +491,7 @@
                 <Border DockPanel.Dock="Top" Background="#FFFFFF" BorderBrush="#D6E2F0" BorderThickness="1" CornerRadius="14" Padding="10" Margin="0,0,0,12">
                     <DockPanel>
                         <TextBlock DockPanel.Dock="Left" Text="Terminées" Foreground="#334155" FontSize="11" FontWeight="SemiBold" Margin="0,0,12,0" VerticalAlignment="Center"/>
-                        <ItemsControl x:Name="CompletedTasksItems">
+<ItemsControl x:Name="CompletedTasksItems">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
                                     <WrapPanel VerticalAlignment="Center"/>
@@ -523,7 +523,132 @@
                                                 <StopStoryboard BeginStoryboardName="UpdateHaloPulseStoryboard"/>
                                             </DataTrigger.ExitActions>
                                         </DataTrigger>
-                                    </Style.Triggers>
+                                                                                        <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Name}" Value="Audit"/>
+                                                            <Condition Binding="{Binding Status}" Value="Terminé"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard x:Name="AuditHaloGreenCompletedStoryboard">
+                                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                                                     From="0" To="18" Duration="0:0:0.9"/>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                                                     From="0.15" To="0.85" Duration="0:0:0.9"/>
+                                                                    <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
+                                                                                    To="#22C55E" Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                        <MultiDataTrigger.ExitActions>
+                                                            <StopStoryboard BeginStoryboardName="AuditHaloGreenCompletedStoryboard"/>
+                                                        </MultiDataTrigger.ExitActions>
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Name}" Value="Audit"/>
+                                                            <Condition Binding="{Binding Status}" Value="Completed"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard x:Name="AuditHaloGreenCompletedEnStoryboard">
+                                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                                                     From="0" To="18" Duration="0:0:0.9"/>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                                                     From="0.15" To="0.85" Duration="0:0:0.9"/>
+                                                                    <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
+                                                                                    To="#22C55E" Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                        <MultiDataTrigger.ExitActions>
+                                                            <StopStoryboard BeginStoryboardName="AuditHaloGreenCompletedEnStoryboard"/>
+                                                        </MultiDataTrigger.ExitActions>
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Name}" Value="Audit"/>
+                                                            <Condition Binding="{Binding Status}" Value="Erreur"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard x:Name="AuditHaloRedErrorStoryboard">
+                                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                                                     From="0" To="20" Duration="0:0:0.75"/>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                                                     From="0.20" To="0.95" Duration="0:0:0.75"/>
+                                                                    <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
+                                                                                    To="#EF4444" Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                        <MultiDataTrigger.ExitActions>
+                                                            <StopStoryboard BeginStoryboardName="AuditHaloRedErrorStoryboard"/>
+                                                        </MultiDataTrigger.ExitActions>
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Name}" Value="Audit"/>
+                                                            <Condition Binding="{Binding Status}" Value="Error"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard x:Name="AuditHaloRedErrorEnStoryboard">
+                                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                                                     From="0" To="20" Duration="0:0:0.75"/>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                                                     From="0.20" To="0.95" Duration="0:0:0.75"/>
+                                                                    <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
+                                                                                    To="#EF4444" Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                        <MultiDataTrigger.ExitActions>
+                                                            <StopStoryboard BeginStoryboardName="AuditHaloRedErrorEnStoryboard"/>
+                                                        </MultiDataTrigger.ExitActions>
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Name}" Value="Audit"/>
+                                                            <Condition Binding="{Binding Status}" Value="Avertissement"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard x:Name="AuditHaloRedWarningStoryboard">
+                                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                                                     From="0" To="20" Duration="0:0:0.75"/>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                                                     From="0.20" To="0.95" Duration="0:0:0.75"/>
+                                                                    <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
+                                                                                    To="#EF4444" Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                        <MultiDataTrigger.ExitActions>
+                                                            <StopStoryboard BeginStoryboardName="AuditHaloRedWarningStoryboard"/>
+                                                        </MultiDataTrigger.ExitActions>
+                                                    </MultiDataTrigger>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Binding="{Binding Name}" Value="Audit"/>
+                                                            <Condition Binding="{Binding Status}" Value="Warning"/>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <MultiDataTrigger.EnterActions>
+                                                            <BeginStoryboard x:Name="AuditHaloRedWarningEnStoryboard">
+                                                                <Storyboard RepeatBehavior="Forever" AutoReverse="True">
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
+                                                                                     From="0" To="20" Duration="0:0:0.75"/>
+                                                                    <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
+                                                                                     From="0.20" To="0.95" Duration="0:0:0.75"/>
+                                                                    <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
+                                                                                    To="#EF4444" Duration="0:0:0.1"/>
+                                                                </Storyboard>
+                                                            </BeginStoryboard>
+                                                        </MultiDataTrigger.EnterActions>
+                                                        <MultiDataTrigger.ExitActions>
+                                                            <StopStoryboard BeginStoryboardName="AuditHaloRedWarningEnStoryboard"/>
+                                                        </MultiDataTrigger.ExitActions>
+                                                    </MultiDataTrigger></Style.Triggers>
                                 </Style>
                             </Border.Style>
                                         <Border.ToolTip>

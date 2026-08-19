@@ -698,7 +698,6 @@ private void SetDashboardScore(int score)
             TxtScoreHero.Foreground = UiBrushProvider.FromHex(ScoreColorProvider.Error);
         }
     }
-
     private void CompletedTaskItem_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
         e.Handled = true;
@@ -708,5 +707,9 @@ private void SetDashboardScore(int score)
             return;
         }
 
-        EPFOptimizerPro.Services.UpdateTaskWindowLauncher.ShowIfUpdateTask(this, element.DataContext);
-    }}
+        EPFOptimizerPro.Services.CompletedTaskActionLauncher.Show(
+            this,
+            element.DataContext,
+            _engine.CompletedTasks.Cast<object>());
+    }
+}
