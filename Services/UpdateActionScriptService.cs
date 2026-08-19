@@ -14,6 +14,8 @@ public static class UpdateActionScriptService
             string header =
                 "$Host.UI.RawUI.WindowTitle = 'EPFOptimizerPro - " + safeTitle + "';" + Environment.NewLine +
                 "Write-Host 'EPFOptimizerPro - " + safeTitle + "' -ForegroundColor Cyan;" + Environment.NewLine +
+                "try { chcp 65001 > $null } catch {};" + Environment.NewLine +
+                "try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8; $OutputEncoding = [System.Text.Encoding]::UTF8 } catch {};" + Environment.NewLine +
                 "Write-Host '';" + Environment.NewLine;
 
             string footer =
@@ -138,28 +140,48 @@ public static class UpdateActionScriptService
             "winget upgrade --source winget --accept-source-agreements --disable-interactivity"
         });
     }
-
     public static string BuildWingetAppsUpdateScript()
     {
         return string.Join(Environment.NewLine, new[]
         {
             "$ErrorActionPreference = 'Continue'",
             "$winget = Get-Command winget -ErrorAction SilentlyContinue",
-            "if ($null -eq $winget) { Write-Host 'winget est introuvable sur ce poste.' -ForegroundColor Red; return }",
-            "Write-Host 'Mise a jour de la source winget...' -ForegroundColor Yellow",
-            "winget source update --name winget --disable-interactivity",
-            "Write-Host ''",
-            "Write-Host 'Applications detectees :' -ForegroundColor Yellow",
-            "winget upgrade --source winget --accept-source-agreements --disable-interactivity",
-            "Write-Host ''",
-            "Write-Host 'Cette action va installer toutes les mises a jour applicatives winget listees ci-dessus.' -ForegroundColor Yellow",
-            "$answer = Read-Host 'Continuer ? Tape O puis Entree pour confirmer'",
-            "if ($answer -notin @('O','o','Oui','oui','Y','y','Yes','yes')) { Write-Host 'Installation annulee par utilisateur.' -ForegroundColor Yellow; return }",
-            "Write-Host ''",
-            "Write-Host 'Installation des mises a jour applicatives winget...' -ForegroundColor Yellow",
-            "winget upgrade --all --source winget --accept-source-agreements --accept-package-agreements --disable-interactivity",
-            "Write-Host ''",
-            "Write-Host 'Action winget terminee.' -ForegroundColor Green"
+            "if ($null -eq $winget) {",
+            "    Write-Host 'winget est introuvable sur ce poste.' -ForegroundColor Red",
+            "}",
+            "else {",
+            "    Write-Host 'Mise a jour de la source winget...' -ForegroundColor Yellow",
+            "    winget source update --name winget --disable-interactivity",
+            "    Write-Host ''",
+            "    Write-Host 'Applications detectees :' -ForegroundColor Yellow",
+            "    $scan = (& winget upgrade --source winget --accept-source-agreements --disable-interactivity 2>&1)",
+            "    $scan | ForEach-Object { Write-Host $_ }",
+            "    $scanText = (($scan | Out-String).ToLowerInvariant())",
+            "    $noStandardUpdates = $scanText.Contains('aucun package') -or $scanText.Contains('no installed package') -or $scanText.Contains('no package found') -or $scanText.Contains('no available upgrade') -or $scanText.Contains('aucune mise')",
+            "    $hasUnknownHint = $scanText.Contains('include-unknown') -or $scanText.Contains('unknown') -or $scanText.Contains('inconn')",
+            "    if ($noStandardUpdates) {",
+            "        Write-Host ''",
+            "        Write-Host 'Aucune mise a jour applicative winget standard disponible.' -ForegroundColor Green",
+            "        if ($hasUnknownHint) {",
+            "            Write-Host 'Winget signale toutefois des versions inconnues : utilisez le bouton Resoudre updates inconnues.' -ForegroundColor Yellow",
+            "        }",
+            "    }",
+            "    else {",
+            "        Write-Host ''",
+            "        Write-Host 'Cette action va installer toutes les mises a jour applicatives winget listees ci-dessus.' -ForegroundColor Yellow",
+            "        $answer = Read-Host 'Continuer ? Tape O puis Entree pour confirmer'",
+            "        if ($answer -in @('O','o','Oui','oui','Y','y','Yes','yes')) {",
+            "            Write-Host ''",
+            "            Write-Host 'Installation des mises a jour applicatives winget...' -ForegroundColor Yellow",
+            "            winget upgrade --all --source winget --accept-source-agreements --accept-package-agreements --disable-interactivity",
+            "            Write-Host ''",
+            "            Write-Host 'Action winget terminee.' -ForegroundColor Green",
+            "        }",
+            "        else {",
+            "            Write-Host 'Installation annulee par utilisateur.' -ForegroundColor Yellow",
+            "        }",
+            "    }",
+            "}"
         });
     }
 
