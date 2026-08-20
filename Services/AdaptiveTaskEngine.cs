@@ -73,7 +73,7 @@ public sealed class AdaptiveTaskEngine
 
     private void InitTasks(bool optimize)
     {
-        var completedTaskNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        ISet<string> completedTaskNames = IncrementalTaskPlanner.CreateCompletedTaskNames(Array.Empty<string>());
 
         _dispatcher.Invoke(() =>
         {
@@ -82,13 +82,8 @@ public sealed class AdaptiveTaskEngine
 
             if (optimize)
             {
-                foreach (var completedTask in CompletedTasks)
-                {
-                    if (!string.IsNullOrWhiteSpace(completedTask.Name))
-                    {
-                        completedTaskNames.Add(completedTask.Name);
-                    }
-                }
+                completedTaskNames = IncrementalTaskPlanner.CreateCompletedTaskNames(
+                    CompletedTasks.Select(completedTask => completedTask.Name));
             }
             else
             {
@@ -118,7 +113,7 @@ public sealed class AdaptiveTaskEngine
         string command,
         int timeoutSeconds)
     {
-        if (completedTaskNames.Contains(name))
+        if (!IncrementalTaskPlanner.ShouldSchedule(completedTaskNames, name))
         {
             Log("INFO", name, "Resultat precedent conserve, tache non relancee.");
             return;
