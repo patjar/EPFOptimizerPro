@@ -109,6 +109,7 @@ public sealed class AuditManagementWindow : Window
         actions.Children.Add(CreateButton("Vérifier le dernier MSI", 190, async (_, _) => await CheckMsiSignatureAsync()));
         actions.Children.Add(CreateButton("Vérifier le dépôt Git", 180, (_, _) => CheckGitRepositoryHealth()));
         actions.Children.Add(CreateButton("Exporter le rapport complet", 220, async (_, _) => await ExportFullAuditReportAsync()));
+        actions.Children.Add(CreateButton("Vérifier les liens et lanceurs", 220, (_, _) => OpenApplicationLinksAudit()));
         DockPanel.SetDock(actions, Dock.Top);
         panel.Children.Add(actions);
         panel.Children.Add(_developerText);
@@ -186,6 +187,14 @@ public sealed class AuditManagementWindow : Window
         Clipboard.SetText(_developerText.Text);
     }
 
+    private void OpenApplicationLinksAudit()
+    {
+        var window = new ApplicationLinksAuditWindow
+        {
+            Owner = this
+        };
+        window.ShowDialog();
+    }
     private async Task ExportFullAuditReportAsync()
     {
         _developerText.Text = "Export du rapport complet en cours...";
