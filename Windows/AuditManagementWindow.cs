@@ -102,7 +102,7 @@ public sealed class AuditManagementWindow : Window
     {
         var panel = new DockPanel();
         var actions = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
-        actions.Children.Add(CreateButton("Ouvrir les logs", 160, (_, _) => OpenLogs()));
+        actions.Children.Add(CreateButton("Voir les journaux", 160, (_, _) => OpenLogs()));
         actions.Children.Add(CreateButton("Copier les infos techniques", 210, (_, _) => CopyDeveloperInfo()));
         actions.Children.Add(CreateButton("Tester le canal de mise à jour", 220, async (_, _) => await TestUpdateChannelAsync()));
         DockPanel.SetDock(actions, Dock.Top);
@@ -198,18 +198,11 @@ public sealed class AuditManagementWindow : Window
     }
     private void OpenLogs()
     {
-        try
+        var window = new AuditLogsWindow
         {
-            AuditDeveloperInfoProvider.OpenLogFolder();
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show(
-                "Impossible d'ouvrir le dossier des logs : " + ex.Message,
-                "Gestion des audits",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-        }
+            Owner = this
+        };
+        window.ShowDialog();
     }
 
     private static TabItem CreateTab(string header, UIElement content)
