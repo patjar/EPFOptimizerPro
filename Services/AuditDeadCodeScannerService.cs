@@ -124,11 +124,22 @@ public static class AuditDeadCodeScannerService
                 string className = match.Groups["name"].Value;
                 if (className is "App" or "MainWindow") continue;
 
-                int references = contents
-                    .Where(pair => !pair.Key.Equals(file, StringComparison.OrdinalIgnoreCase))
-                    .Count(pair => Regex.IsMatch(pair.Value, $@"\b{Regex.Escape(className)}\b"));
+                var typePattern = new Regex(
+                    $@"\b{Regex.Escape(className)}\b",
+                    RegexOptions.Compiled);
 
-                if (references == 0)
+                int totalOccurrences = contents.Values
+                    .Sum(source => typePattern.Matches(source).Count);
+
+                int declarationOccurrences = contents.Values
+                    .Sum(source => declarationPattern.Matches(source)
+                        .Count(declaration => declaration.Groups["name"].Value.Equals(
+                            className,
+                            StringComparison.Ordinal)));
+
+                int nonDeclarationOccurrences = totalOccurrences - declarationOccurrences;
+
+                if (nonDeclarationOccurrences == 0)
                 {
                     findings.Add($"[CLASSE A VERIFIER] {className} dans {Relative(root, file)}");
                 }
