@@ -104,6 +104,7 @@ public sealed class AuditManagementWindow : Window
         var actions = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
         actions.Children.Add(CreateButton("Ouvrir les logs", 160, (_, _) => OpenLogs()));
         actions.Children.Add(CreateButton("Copier les infos techniques", 210, (_, _) => CopyDeveloperInfo()));
+        actions.Children.Add(CreateButton("Tester le canal de mise à jour", 220, async (_, _) => await TestUpdateChannelAsync()));
         DockPanel.SetDock(actions, Dock.Top);
         panel.Children.Add(actions);
         panel.Children.Add(_developerText);
@@ -181,6 +182,20 @@ public sealed class AuditManagementWindow : Window
         Clipboard.SetText(_developerText.Text);
     }
 
+    private async Task TestUpdateChannelAsync()
+    {
+        _developerText.Text = "Diagnostic du canal de mise à jour en cours...";
+
+        try
+        {
+            _developerText.Text = await AuditUpdateChannelDiagnosticService.BuildReportAsync();
+        }
+        catch (Exception ex)
+        {
+            _developerText.Text = "Erreur pendant le diagnostic du canal de mise à jour :" +
+                Environment.NewLine + Environment.NewLine + ex.Message;
+        }
+    }
     private void OpenLogs()
     {
         try
