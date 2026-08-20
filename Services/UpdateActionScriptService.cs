@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 
@@ -215,10 +215,10 @@ public static class UpdateActionScriptService
         {
             "$ErrorActionPreference = 'Continue'",
             "Write-Host 'Ouverture de Microsoft Store sur la page des mises a jour...' -ForegroundColor Yellow",
-            "try { Start-Process 'ms-windows-store://downloadsandupdates' }",
+            "try { Start-Process -FilePath 'explorer.exe' -ArgumentList 'ms-windows-store://downloadsandupdates' }",
             "catch {",
             "    Write-Host 'Impossible d ouvrir la page directe des mises a jour. Ouverture du Microsoft Store.' -ForegroundColor Yellow",
-            "    Start-Process 'ms-windows-store:'",
+            "    Start-Process -FilePath 'explorer.exe' -ArgumentList 'ms-windows-store:'",
             "}"
         });
     }
