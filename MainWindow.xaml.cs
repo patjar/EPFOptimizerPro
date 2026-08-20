@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -189,7 +189,12 @@ public partial class MainWindow : Window
 
     private void UpdateDashboardSummary()
     {
-        int total = _engine.Tasks.Count;
+        int total = _engine.CompletedTasks
+            .Concat(_engine.ActiveTasks)
+            .Select(task => task.Name)
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Count();
         int done = _engine.CompletedTasks.Count(t => TaskStatusTextProvider.IsCompleted(t.Status));
         int running = _engine.ActiveTasks.Count(t => TaskStatusTextProvider.IsRunning(t.Status));
         int waiting = _engine.ActiveTasks.Count(t => TaskStatusTextProvider.IsWaiting(t.Status));

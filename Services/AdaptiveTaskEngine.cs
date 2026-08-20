@@ -73,28 +73,59 @@ public sealed class AdaptiveTaskEngine
 
     private void InitTasks(bool optimize)
     {
+        var completedTaskNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         _dispatcher.Invoke(() =>
         {
             Tasks.Clear();
             ActiveTasks.Clear();
-            CompletedTasks.Clear();
+
+            if (optimize)
+            {
+                foreach (var completedTask in CompletedTasks)
+                {
+                    if (!string.IsNullOrWhiteSpace(completedTask.Name))
+                    {
+                        completedTaskNames.Add(completedTask.Name);
+                    }
+                }
+            }
+            else
+            {
+                CompletedTasks.Clear();
+            }
         });
+
         _commandTable.Clear();
 
-        AddTask("Audit", "Get-ComputerInfo | Select-Object WindowsProductName, WindowsVersion, OsBuildNumber | Format-List | Out-String", 30);
-        AddTask("Updates", "$session = New-Object -ComObject Microsoft.Update.Session; $searcher = $session.CreateUpdateSearcher(); $result = $searcher.Search('IsInstalled=0 and IsHidden=0'); 'Mises à jour disponibles : ' + $result.Updates.Count", 240);
+        AddTaskIfMissing(completedTaskNames, "Audit", "Get-ComputerInfo | Select-Object WindowsProductName, WindowsVersion, OsBuildNumber | Format-List | Out-String", 30);
+        AddTaskIfMissing(completedTaskNames, "Updates", "$session = New-Object -ComObject Microsoft.Update.Session; $searcher = $session.CreateUpdateSearcher(); $result = $searcher.Search('IsInstalled=0 and IsHidden=0'); 'Mises à jour disponibles : ' + $result.Updates.Count", 240);
 
         if (optimize)
         {
-            AddTask("Temp User", "Get-ChildItem -Path $env:TEMP -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue", 90);
-            AddTask("Temp Win", "Get-ChildItem -Path 'C:\\Windows\\Temp' -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue", 90);
-            AddTask("Corbeille", "Clear-RecycleBin -Force -ErrorAction SilentlyContinue", 60);
-            AddTask("DNS", "ipconfig /flushdns", 30);
-            AddTask("Volumes", "Get-Volume | Where-Object DriveLetter | ForEach-Object { Optimize-Volume -DriveLetter $_.DriveLetter }", 600);
-            AddTask("SFC", "sfc /scannow", 1200);
+            AddTaskIfMissing(completedTaskNames, "Temp User", "Get-ChildItem -Path $env:TEMP -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue", 90);
+            AddTaskIfMissing(completedTaskNames, "Temp Win", "Get-ChildItem -Path 'C:\\Windows\\Temp' -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue", 90);
+            AddTaskIfMissing(completedTaskNames, "Corbeille", "Clear-RecycleBin -Force -ErrorAction SilentlyContinue", 60);
+            AddTaskIfMissing(completedTaskNames, "DNS", "ipconfig /flushdns", 30);
+            AddTaskIfMissing(completedTaskNames, "Volumes", "Get-Volume | Where-Object DriveLetter | ForEach-Object { Optimize-Volume -DriveLetter $_.DriveLetter }", 600);
+            AddTaskIfMissing(completedTaskNames, "SFC", "sfc /scannow", 1200);
         }
     }
 
+    private void AddTaskIfMissing(
+        ISet<string> completedTaskNames,
+        string name,
+        string command,
+        int timeoutSeconds)
+    {
+        if (completedTaskNames.Contains(name))
+        {
+            Log("INFO", name, "Resultat precedent conserve, tache non relancee.");
+            return;
+        }
+
+        AddTask(name, command, timeoutSeconds);
+    }
     private void AddTask(string name, string command, int timeoutSeconds)
     {
         var item = new TaskProgressInfo
