@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using EPFOptimizerPro.Models;
 
 namespace EPFOptimizerPro.Services;
 
@@ -36,8 +37,20 @@ public static class AuditFullReportExporter
             AuditGitRepositoryHealthService.BuildReport,
             "Diagnostic Git indisponible.");
 
+        var dashboardModels = new List<AuditDashboardCardModel>
+        {
+            AuditDashboardStatusInterpreter.FromSystemAudit(problems.Count),
+            AuditDashboardStatusInterpreter.FromUpdateChannel(updateChannel),
+            AuditDashboardStatusInterpreter.FromVersions(versions),
+            AuditDashboardStatusInterpreter.FromMsi(msi),
+            AuditDashboardStatusInterpreter.FromGit(git),
+            AuditDashboardStatusInterpreter.FromDeadCode(deadCode)
+        };
+        string dashboardSummary =
+            AuditDashboardMarkdownSummaryProvider.Build(dashboardModels);
+
         string report = BuildMarkdown(
-            summary, problemReport, developer, deadCode,
+            dashboardSummary, summary, problemReport, developer, deadCode,
             updateChannel, versions, msi, git);
 
         string folder = EnsureReportFolder();
@@ -72,6 +85,7 @@ public static class AuditFullReportExporter
     {
         string[] titles =
         {
+            "Synthese du tableau de bord",
             "Resume de l'audit",
             "Problemes detectes",
             "Informations developpeur",
