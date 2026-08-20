@@ -2,8 +2,10 @@ using System.IO;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using EPFOptimizerPro.Services;
+using EPFOptimizerPro.Models;
 
 namespace EPFOptimizerPro.Windows;
 
@@ -18,6 +20,13 @@ public sealed class AuditManagementWindow : Window
     private readonly TextBox _problemsText;
     private readonly TextBox _developerText;
     private readonly TextBox _deadCodeText;
+    private readonly TabControl _tabs;
+    private readonly Dictionary<string, AuditDashboardCardModel> _dashboardModels = new();
+    private UniformGrid? _dashboardCards;
+    private bool _isDashboardRunning;
+    private Border? _dashboardGlobalBanner;
+    private TextBlock? _dashboardGlobalTitle;
+    private TextBlock? _dashboardGlobalSummary;
 
     public AuditManagementWindow(
         string name,
@@ -33,10 +42,10 @@ public sealed class AuditManagementWindow : Window
         _completedTasks = completedTasks;
 
         Title = "Gestion des audits";
-        Width = 900;
-        Height = 620;
-        MinWidth = 780;
-        MinHeight = 500;
+        Width = 980;
+        Height = 700;
+        MinWidth = 840;
+        MinHeight = 560;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         ResizeMode = ResizeMode.CanResize;
 
@@ -62,17 +71,256 @@ public sealed class AuditManagementWindow : Window
         _developerText = CreateReadOnlyTextBox();
         _deadCodeText = CreateReadOnlyTextBox();
 
-        var tabs = new TabControl();
-        tabs.Items.Add(CreateTab("Résumé", _summaryText));
-        tabs.Items.Add(CreateTab("Problèmes", BuildProblemsPanel()));
-        tabs.Items.Add(CreateTab("Développeur", BuildDeveloperPanel()));
-        tabs.Items.Add(CreateTab("Code mort [Expérimental]", BuildDeadCodePanel()));
-        root.Children.Add(tabs);
+        _tabs = new TabControl();
+        _tabs.Items.Add(CreateTab("Tableau de bord", BuildDashboardPanel()));
+        _tabs.Items.Add(CreateTab("Résumé", _summaryText));
+        _tabs.Items.Add(CreateTab("Problèmes", BuildProblemsPanel()));
+        _tabs.Items.Add(CreateTab("Développeur", BuildDeveloperPanel()));
+        _tabs.Items.Add(CreateTab("Code mort [Expérimental]", BuildDeadCodePanel()));
+        root.Children.Add(_tabs);
 
         Content = root;
         RefreshContent();
     }
 
+    private UIElement BuildDashboardPanel()
+    {
+        var page = new DockPanel
+        {
+            Margin = new Thickness(4)
+        };
+
+        var intro = new StackPanel
+        {
+            Margin = new Thickness(0, 0, 0, 9)
+        };
+        intro.Children.Add(new TextBlock
+        {
+            Text = "Tableau de bord des contrôles",
+            FontSize = 20,
+            FontWeight = FontWeights.Bold,
+            Foreground = new SolidColorBrush(Color.FromRgb(15, 23, 42))
+        });
+        intro.Children.Add(new TextBlock
+        {
+            Text = "V8.2 : lancez tous les contrôles en lecture seule ou utilisez Détails pour un contrôle ciblé.",
+            Margin = new Thickness(0, 3, 0, 0),
+            Foreground = new SolidColorBrush(Color.FromRgb(71, 85, 105)),
+            TextWrapping = TextWrapping.Wrap
+        });
+        intro.Children.Add(BuildDashboardGlobalBanner());
+        var dashboardActions = new WrapPanel
+        {
+            Margin = new Thickness(0, 10, 0, 0)
+        };
+        dashboardActions.Children.Add(CreateButton(
+            "Tout vérifier",
+            150,
+            async (_, _) => await RunAllDashboardChecksAsync()));
+        intro.Children.Add(dashboardActions);
+
+        DockPanel.SetDock(intro, Dock.Top);
+        page.Children.Add(intro);
+
+        InitializeDashboardModels();
+        _dashboardCards = new UniformGrid
+        {
+            Columns = 3,
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Top,
+            MaxWidth = 960
+        };
+        RefreshDashboardCards();
+
+        var cardsHost = new Grid
+        {
+            HorizontalAlignment = HorizontalAlignment.Stretch,
+            VerticalAlignment = VerticalAlignment.Top
+        };
+        cardsHost.Children.Add(_dashboardCards);
+        page.Children.Add(cardsHost);
+        return page;
+    }
+
+    private async Task RunAllDashboardChecksAsync()
+    {
+        if (_isDashboardRunning) return;
+        _isDashboardRunning = true;
+        UpdateDashboardGlobalVerdict();
+
+        try
+        {
+            IReadOnlyList<AuditProblemSummary> problems =
+                AuditProblemsFilterService.GetErrors(_completedTasks);
+            SetDashboardModel(AuditDashboardStatusInterpreter.FromSystemAudit(problems.Count));
+
+            SetDashboardModel(AuditDashboardStatusInterpreter.Running(
+                "updates", "Canal stable", "Release GitHub et mises à jour"));
+            try
+            {
+                string updateReport = await AuditUpdateChannelDiagnosticService.BuildReportAsync();
+                _developerText.Text = updateReport;
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromUpdateChannel(updateReport));
+            }
+            catch (Exception ex)
+            {
+                SetDashboardModel(AuditDashboardStatusInterpreter.Failed(
+                    "updates", "Canal stable", "Release GitHub et mises à jour", ex.Message));
+            }
+
+            SetDashboardModel(AuditDashboardStatusInterpreter.Running(
+                "versions", "Versions", "Projet, assembly, EXE et MSI"));
+            try
+            {
+                string versionsReport = AuditVersionConsistencyService.BuildReport();
+                _developerText.Text = versionsReport;
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromVersions(versionsReport));
+            }
+            catch (Exception ex)
+            {
+                SetDashboardModel(AuditDashboardStatusInterpreter.Failed(
+                    "versions", "Versions", "Projet, assembly, EXE et MSI", ex.Message));
+            }
+
+            SetDashboardModel(AuditDashboardStatusInterpreter.Running(
+                "msi", "MSI et signature", "Authenticode et préparation publication"));
+            try
+            {
+                string msiReport = await AuditMsiSignatureService.BuildReportAsync();
+                _developerText.Text = msiReport;
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromMsi(msiReport));
+            }
+            catch (Exception ex)
+            {
+                SetDashboardModel(AuditDashboardStatusInterpreter.Failed(
+                    "msi", "MSI et signature", "Authenticode et préparation publication", ex.Message));
+            }
+
+            SetDashboardModel(AuditDashboardStatusInterpreter.Running(
+                "git", "Dépôt Git", "Branche, synchronisation et working tree"));
+            try
+            {
+                string gitReport = AuditGitRepositoryHealthService.BuildReport();
+                _developerText.Text = gitReport;
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromGit(gitReport));
+            }
+            catch (Exception ex)
+            {
+                SetDashboardModel(AuditDashboardStatusInterpreter.Failed(
+                    "git", "Dépôt Git", "Branche, synchronisation et working tree", ex.Message));
+            }
+
+            SetDashboardModel(AuditDashboardStatusInterpreter.Running(
+                "deadcode", "Code mort", "Analyse conservatrice en lecture seule"));
+            try
+            {
+                string deadCodeReport = AuditDeadCodeScannerService.Scan(FindProjectRoot());
+                _deadCodeText.Text = deadCodeReport;
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromDeadCode(deadCodeReport));
+            }
+            catch (Exception ex)
+            {
+                SetDashboardModel(AuditDashboardStatusInterpreter.Failed(
+                    "deadcode", "Code mort", "Analyse conservatrice en lecture seule", ex.Message));
+            }
+        }
+        finally
+        {
+            _isDashboardRunning = false;
+            UpdateDashboardGlobalVerdict();
+        }
+    }
+    private UIElement BuildDashboardGlobalBanner()
+    {
+        _dashboardGlobalTitle = new TextBlock
+        {
+            FontSize = 16,
+            FontWeight = FontWeights.Bold
+        };
+        _dashboardGlobalSummary = new TextBlock
+        {
+            Margin = new Thickness(0, 3, 0, 0),
+            TextWrapping = TextWrapping.Wrap
+        };
+
+        var content = new StackPanel();
+        content.Children.Add(_dashboardGlobalTitle);
+        content.Children.Add(_dashboardGlobalSummary);
+
+        _dashboardGlobalBanner = new Border
+        {
+            Margin = new Thickness(0, 10, 0, 0),
+            Padding = new Thickness(14, 10, 14, 10),
+            CornerRadius = new CornerRadius(9),
+            BorderThickness = new Thickness(1),
+            Child = content
+        };
+        UpdateDashboardGlobalVerdict();
+        return _dashboardGlobalBanner;
+    }
+
+    private void UpdateDashboardGlobalVerdict()
+    {
+        if (_dashboardGlobalBanner is null ||
+            _dashboardGlobalTitle is null ||
+            _dashboardGlobalSummary is null) return;
+
+        AuditDashboardGlobalVerdict verdict = AuditDashboardGlobalVerdictService.Build(
+            _dashboardModels.Values,
+            _isDashboardRunning);
+
+        var accent = new SolidColorBrush(verdict.Accent);
+        _dashboardGlobalBanner.Background = new SolidColorBrush(verdict.Background);
+        _dashboardGlobalBanner.BorderBrush = accent;
+        _dashboardGlobalTitle.Foreground = accent;
+        _dashboardGlobalSummary.Foreground = new SolidColorBrush(Color.FromRgb(51, 65, 85));
+        _dashboardGlobalTitle.Text = verdict.Title;
+        _dashboardGlobalSummary.Text = verdict.Summary;
+    }
+    private void InitializeDashboardModels()
+    {
+        if (_dashboardModels.Count > 0) return;
+
+        _dashboardModels["system"] = AuditDashboardStatusInterpreter.NotRun(
+            "system", "Audit système", "Résumé et problèmes détectés");
+        _dashboardModels["updates"] = AuditDashboardStatusInterpreter.NotRun(
+            "updates", "Canal stable", "Release GitHub et mises à jour");
+        _dashboardModels["versions"] = AuditDashboardStatusInterpreter.NotRun(
+            "versions", "Versions", "Projet, assembly, EXE et MSI");
+        _dashboardModels["msi"] = AuditDashboardStatusInterpreter.NotRun(
+            "msi", "MSI et signature", "Authenticode et préparation publication");
+        _dashboardModels["git"] = AuditDashboardStatusInterpreter.NotRun(
+            "git", "Dépôt Git", "Branche, synchronisation et working tree");
+        _dashboardModels["deadcode"] = AuditDashboardStatusInterpreter.NotRun(
+            "deadcode", "Code mort", "Analyse conservatrice en lecture seule");
+    }
+
+    private void SetDashboardModel(AuditDashboardCardModel model)
+    {
+        _dashboardModels[model.Id] = model;
+        RefreshDashboardCards();
+    }
+
+    private void RefreshDashboardCards()
+    {
+        if (_dashboardCards is null) return;
+        _dashboardCards.Children.Clear();
+        AddDashboardCard("system", 1);
+        AddDashboardCard("updates", 3);
+        AddDashboardCard("versions", 3);
+        AddDashboardCard("msi", 3);
+        AddDashboardCard("git", 3);
+        AddDashboardCard("deadcode", 4);
+        UpdateDashboardGlobalVerdict();
+    }
+
+    private void AddDashboardCard(string id, int targetTabIndex)
+    {
+        if (_dashboardCards is null || !_dashboardModels.TryGetValue(id, out AuditDashboardCardModel? model)) return;
+        _dashboardCards.Children.Add(AuditDashboardCardFactory.Create(
+            model,
+            (_, _) => _tabs.SelectedIndex = targetTabIndex));
+    }
     private UIElement BuildFooter()
     {
         var row = new WrapPanel
@@ -133,6 +381,7 @@ public sealed class AuditManagementWindow : Window
     {
         string projectRoot = FindProjectRoot();
         _deadCodeText.Text = AuditDeadCodeScannerService.Scan(projectRoot);
+        SetDashboardModel(AuditDashboardStatusInterpreter.FromDeadCode(_deadCodeText.Text));
     }
 
     private void CopyDeadCodeResults()
@@ -166,6 +415,7 @@ public sealed class AuditManagementWindow : Window
         _summaryText.Text = AuditManagementSummaryProvider.Build(
             _name, _status, _progress, _message, problems);
         _problemsText.Text = AuditProblemsSummaryProvider.Format(problems);
+        SetDashboardModel(AuditDashboardStatusInterpreter.FromSystemAudit(problems.Count));
         _developerText.Text = AuditDeveloperInfoProvider.Build();
     }
 
@@ -233,6 +483,7 @@ public sealed class AuditManagementWindow : Window
         try
         {
             _developerText.Text = AuditGitRepositoryHealthService.BuildReport();
+            SetDashboardModel(AuditDashboardStatusInterpreter.FromGit(_developerText.Text));
         }
         catch (Exception ex)
         {
@@ -246,6 +497,7 @@ public sealed class AuditManagementWindow : Window
         try
         {
             _developerText.Text = await AuditMsiSignatureService.BuildReportAsync();
+            SetDashboardModel(AuditDashboardStatusInterpreter.FromMsi(_developerText.Text));
         }
         catch (Exception ex)
         {
@@ -258,6 +510,7 @@ public sealed class AuditManagementWindow : Window
         try
         {
             _developerText.Text = AuditVersionConsistencyService.BuildReport();
+            SetDashboardModel(AuditDashboardStatusInterpreter.FromVersions(_developerText.Text));
         }
         catch (Exception ex)
         {
@@ -272,6 +525,7 @@ public sealed class AuditManagementWindow : Window
         try
         {
             _developerText.Text = await AuditUpdateChannelDiagnosticService.BuildReportAsync();
+            SetDashboardModel(AuditDashboardStatusInterpreter.FromUpdateChannel(_developerText.Text));
         }
         catch (Exception ex)
         {
