@@ -57,6 +57,14 @@ public static class AdaptiveTaskCatalog
                 true)
         };
 
+    public static bool TryGetDefinition(
+        string taskName,
+        out AdaptiveTaskDefinition? definition)
+    {
+        definition = Definitions.FirstOrDefault(item =>
+            item.Name.Equals(taskName, StringComparison.OrdinalIgnoreCase));
+        return definition is not null;
+    }
     public static IReadOnlyList<AdaptiveTaskDefinition> GetDefinitions(bool optimize)
     {
         return Definitions

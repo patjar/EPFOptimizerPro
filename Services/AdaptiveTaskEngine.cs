@@ -80,6 +80,72 @@ public sealed class AdaptiveTaskEngine
         return report;
     }
 
+    public async Task<bool> RunSingleTaskAsync(
+        string taskName,
+        CancellationToken token = default)
+    {
+        if (!AdaptiveTaskCatalog.TryGetDefinition(
+                taskName,
+                out AdaptiveTaskDefinition? definition) ||
+            definition is null)
+        {
+            Log("WARN", taskName, "Tâche inconnue dans le catalogue.");
+            return false;
+        }
+
+        bool hasActiveTasks = false;
+        _dispatcher.Invoke(() =>
+        {
+            hasActiveTasks = ActiveTasks.Count > 0;
+        });
+
+        if (hasActiveTasks)
+        {
+            Log("WARN", taskName, "Relance refusée : une exécution est déjà en cours.");
+            return false;
+        }
+
+        _currentExecutionOrigin = TaskExecutionOrigin.ManualRerun;
+        _executionMetadata.BeginCycle();
+
+        _dispatcher.Invoke(() =>
+        {
+            foreach (TaskProgressInfo existing in CompletedTasks
+                         .Where(item => item.Name.Equals(
+                             definition.Name,
+                             StringComparison.OrdinalIgnoreCase))
+                         .ToList())
+            {
+                CompletedTasks.Remove(existing);
+            }
+
+            foreach (TaskProgressInfo existing in Tasks
+                         .Where(item => item.Name.Equals(
+                             definition.Name,
+                             StringComparison.OrdinalIgnoreCase))
+                         .ToList())
+            {
+                Tasks.Remove(existing);
+                _commandTable.Remove(existing);
+            }
+        });
+
+        AddTask(
+            definition.Name,
+            definition.Command,
+            definition.TimeoutSeconds);
+
+        TaskProgressInfo task = Tasks.Last(item =>
+            item.Name.Equals(
+                definition.Name,
+                StringComparison.OrdinalIgnoreCase));
+
+        using var semaphore = new SemaphoreSlim(1, 1);
+        await RunTaskWithSemaphoreAsync(task, semaphore, token);
+
+        Log("OK", definition.Name, "Relance manuelle terminée.");
+        return true;
+    }
     private void InitTasks(bool optimize)
     {
         _currentExecutionOrigin = optimize
