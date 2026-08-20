@@ -805,30 +805,15 @@ private void SetDashboardScore(int score)
             return;
         }
 
-        if (task.Name.Equals("DNS", StringComparison.OrdinalIgnoreCase))
-        {
-            MessageBoxResult answer = MessageBox.Show(
+        CompletedTaskManualRerunResult rerun =
+            await CompletedTaskManualRerunActionService.TryRunAsync(
                 this,
-                "Relancer uniquement DNS ?\n\n" +
-                "Le résultat DNS précédent sera remplacé. " +
-                "Les sept autres résultats seront conservés.",
-                "Relance ciblée DNS",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question,
-                MessageBoxResult.No);
+                task,
+                _engine);
 
-            if (answer != MessageBoxResult.Yes)
-            {
-                return;
-            }
-
-            TxtActionHint.Text = "Relance manuelle DNS en cours...";
-
-            bool completed = await _engine.RunSingleTaskAsync("DNS");
-
-            TxtActionHint.Text = completed
-                ? "Relance manuelle DNS terminée."
-                : "Relance manuelle DNS non exécutée. Consultez le journal.";
+        if (rerun.Handled)
+        {
+            TxtActionHint.Text = rerun.Message;
             UpdateDashboardSummary();
             return;
         }
