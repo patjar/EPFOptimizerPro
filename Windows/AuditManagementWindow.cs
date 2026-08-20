@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -8,110 +8,187 @@ namespace EPFOptimizerPro.Windows;
 
 public sealed class AuditManagementWindow : Window
 {
+    private readonly string _name;
+    private readonly string _status;
+    private readonly string _progress;
+    private readonly string _message;
     private readonly IEnumerable<object> _completedTasks;
+    private readonly TextBox _summaryText;
+    private readonly TextBox _problemsText;
+    private readonly TextBox _developerText;
 
-    public AuditManagementWindow(string name, string status, string progress, string message, IEnumerable<object> completedTasks)
+    public AuditManagementWindow(
+        string name,
+        string status,
+        string progress,
+        string message,
+        IEnumerable<object> completedTasks)
     {
+        _name = name;
+        _status = status;
+        _progress = progress;
+        _message = message;
         _completedTasks = completedTasks;
 
         Title = "Gestion des audits";
-        Width = 820;
-        Height = 430;
-        MinWidth = 760;
-        MinHeight = 360;
+        Width = 900;
+        Height = 620;
+        MinWidth = 780;
+        MinHeight = 500;
         WindowStartupLocation = WindowStartupLocation.CenterOwner;
         ResizeMode = ResizeMode.CanResize;
 
-        var root = new DockPanel
-        {
-            Margin = new Thickness(18)
-        };
+        var root = new DockPanel { Margin = new Thickness(18) };
 
-        var title = new TextBlock
+        var header = new TextBlock
         {
             Text = "Gestion des audits",
-            FontSize = 22,
+            FontSize = 24,
             FontWeight = FontWeights.Bold,
-            Margin = new Thickness(0, 0, 0, 10)
+            Foreground = new SolidColorBrush(Color.FromRgb(15, 23, 42)),
+            Margin = new Thickness(0, 0, 0, 12)
         };
-        DockPanel.SetDock(title, Dock.Top);
-        root.Children.Add(title);
+        DockPanel.SetDock(header, Dock.Top);
+        root.Children.Add(header);
 
-        var actions = new StackPanel
+        var footer = BuildFooter();
+        DockPanel.SetDock(footer, Dock.Bottom);
+        root.Children.Add(footer);
+
+        _summaryText = CreateReadOnlyTextBox();
+        _problemsText = CreateReadOnlyTextBox();
+        _developerText = CreateReadOnlyTextBox();
+
+        var tabs = new TabControl();
+        tabs.Items.Add(CreateTab("Résumé", _summaryText));
+        tabs.Items.Add(CreateTab("Problèmes", BuildProblemsPanel()));
+        tabs.Items.Add(CreateTab("Développeur", BuildDeveloperPanel()));
+        tabs.Items.Add(CreateTab("Code mort [Expérimental]", CreateDeadCodePanel()));
+        root.Children.Add(tabs);
+
+        Content = root;
+        RefreshContent();
+    }
+
+    private UIElement BuildFooter()
+    {
+        var row = new WrapPanel
         {
-            Orientation = Orientation.Vertical,
+            HorizontalAlignment = HorizontalAlignment.Right,
             Margin = new Thickness(0, 12, 0, 0)
         };
-        DockPanel.SetDock(actions, Dock.Bottom);
 
-        AddSection(actions, "Audit", new[]
-        {
-            CreateButton("Afficher les erreurs", 220, (_, _) => ShowErrors()),
-            CreateButton("Fermer", 120, (_, _) => Close())
-        });
+        row.Children.Add(CreateButton("Copier le résumé", 160, (_, _) => CopySummary()));
+        row.Children.Add(CreateButton("Actualiser", 120, (_, _) => RefreshContent()));
+        row.Children.Add(CreateButton("Fermer", 120, (_, _) => Close()));
+        return row;
+    }
 
-        root.Children.Add(actions);
+    private UIElement BuildProblemsPanel()
+    {
+        var panel = new DockPanel();
+        var actions = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
+        actions.Children.Add(CreateButton("Afficher les erreurs", 190, (_, _) => ShowErrors()));
+        DockPanel.SetDock(actions, Dock.Top);
+        panel.Children.Add(actions);
+        panel.Children.Add(_problemsText);
+        return panel;
+    }
 
-        string body =
-            "Tache : " + name + Environment.NewLine +
-            "Statut : " + status + Environment.NewLine +
-            "Progression : " + progress + " %" + Environment.NewLine +
-            Environment.NewLine +
-            "Resultat actuel de l'audit :" + Environment.NewLine +
-            (string.IsNullOrWhiteSpace(message) ? "Aucun detail disponible." : message) + Environment.NewLine +
-            Environment.NewLine +
-            "Actions disponibles :" + Environment.NewLine +
-            "- Afficher les erreurs : affiche les erreurs et avertissements detectes par l'audit.";
+    private UIElement BuildDeveloperPanel()
+    {
+        var panel = new DockPanel();
+        var actions = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
+        actions.Children.Add(CreateButton("Ouvrir les logs", 160, (_, _) => OpenLogs()));
+        actions.Children.Add(CreateButton("Copier les infos techniques", 210, (_, _) => CopyDeveloperInfo()));
+        DockPanel.SetDock(actions, Dock.Top);
+        panel.Children.Add(actions);
+        panel.Children.Add(_developerText);
+        return panel;
+    }
 
-        var text = new TextBox
-        {
-            Text = body,
-            IsReadOnly = true,
-            TextWrapping = TextWrapping.Wrap,
-            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
-            FontFamily = new FontFamily("Consolas"),
-            FontSize = 13,
-            Padding = new Thickness(10)
-        };
+    private static UIElement CreateDeadCodePanel()
+    {
+        var text = CreateReadOnlyTextBox();
+        text.Text = AuditDeadCodeInfoProvider.Build();
+        return text;
+    }
 
-        root.Children.Add(text);
-        Content = root;
+    private void RefreshContent()
+    {
+        IReadOnlyList<AuditProblemSummary> problems =
+            AuditProblemsFilterService.GetErrors(_completedTasks);
+
+        _summaryText.Text = AuditManagementSummaryProvider.Build(
+            _name, _status, _progress, _message, problems);
+        _problemsText.Text = AuditProblemsSummaryProvider.Format(problems);
+        _developerText.Text = AuditDeveloperInfoProvider.Build();
     }
 
     private void ShowErrors()
     {
-        IReadOnlyList<AuditProblemSummary> problems = AuditProblemsFilterService.GetErrors(_completedTasks);
-        var window = new AuditProblemsWindow(problems)
-        {
-            Owner = this
-        };
+        IReadOnlyList<AuditProblemSummary> problems =
+            AuditProblemsFilterService.GetErrors(_completedTasks);
+        var window = new AuditProblemsWindow(problems) { Owner = this };
         window.ShowDialog();
     }
 
-    private static void AddSection(Panel parent, string title, IEnumerable<Button> buttons)
+    private void CopySummary()
     {
-        parent.Children.Add(new TextBlock
-        {
-            Text = title,
-            FontWeight = FontWeights.Bold,
-            Margin = new Thickness(0, 8, 0, 4)
-        });
-
-        var row = new WrapPanel
-        {
-            Margin = new Thickness(0, 0, 0, 2)
-        };
-
-        foreach (Button button in buttons)
-        {
-            row.Children.Add(button);
-        }
-
-        parent.Children.Add(row);
+        Clipboard.SetText(_summaryText.Text);
     }
 
-    private static Button CreateButton(string content, double minWidth, RoutedEventHandler clickHandler)
+    private void CopyDeveloperInfo()
+    {
+        Clipboard.SetText(_developerText.Text);
+    }
+
+    private void OpenLogs()
+    {
+        try
+        {
+            AuditDeveloperInfoProvider.OpenLogFolder();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                "Impossible d'ouvrir le dossier des logs : " + ex.Message,
+                "Gestion des audits",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
+    }
+
+    private static TabItem CreateTab(string header, UIElement content)
+    {
+        return new TabItem
+        {
+            Header = header,
+            Content = content,
+            Padding = new Thickness(14, 7, 14, 7)
+        };
+    }
+
+    private static TextBox CreateReadOnlyTextBox()
+    {
+        return new TextBox
+        {
+            IsReadOnly = true,
+            TextWrapping = TextWrapping.Wrap,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+            FontFamily = new FontFamily("Consolas"),
+            FontSize = 13,
+            Padding = new Thickness(12),
+            BorderBrush = new SolidColorBrush(Color.FromRgb(203, 213, 225)),
+            Background = Brushes.White
+        };
+    }
+
+    private static Button CreateButton(
+        string content,
+        double minWidth,
+        RoutedEventHandler clickHandler)
     {
         var button = new Button
         {
@@ -120,7 +197,6 @@ public sealed class AuditManagementWindow : Window
             Margin = new Thickness(0, 0, 10, 6),
             Padding = new Thickness(12, 8, 12, 8)
         };
-
         button.Click += clickHandler;
         return button;
     }
