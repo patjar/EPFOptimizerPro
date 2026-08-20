@@ -107,6 +107,7 @@ public sealed class AuditManagementWindow : Window
         actions.Children.Add(CreateButton("Tester le canal de mise à jour", 220, async (_, _) => await TestUpdateChannelAsync()));
         actions.Children.Add(CreateButton("Vérifier la cohérence des versions", 240, (_, _) => CheckVersionConsistency()));
         actions.Children.Add(CreateButton("Vérifier le dernier MSI", 190, async (_, _) => await CheckMsiSignatureAsync()));
+        actions.Children.Add(CreateButton("Vérifier le dépôt Git", 180, (_, _) => CheckGitRepositoryHealth()));
         DockPanel.SetDock(actions, Dock.Top);
         panel.Children.Add(actions);
         panel.Children.Add(_developerText);
@@ -184,6 +185,18 @@ public sealed class AuditManagementWindow : Window
         Clipboard.SetText(_developerText.Text);
     }
 
+    private void CheckGitRepositoryHealth()
+    {
+        try
+        {
+            _developerText.Text = AuditGitRepositoryHealthService.BuildReport();
+        }
+        catch (Exception ex)
+        {
+            _developerText.Text = "Erreur pendant le contrôle du dépôt Git :" +
+                Environment.NewLine + Environment.NewLine + ex.Message;
+        }
+    }
     private async Task CheckMsiSignatureAsync()
     {
         _developerText.Text = "Vérification du dernier MSI en cours...";
