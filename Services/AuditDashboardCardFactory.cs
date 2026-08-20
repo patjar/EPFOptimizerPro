@@ -45,7 +45,10 @@ public static class AuditDashboardCardFactory
         body.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         body.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
         body.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
-        body.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+        var heading = new Grid();
+        heading.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        heading.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
         var title = new TextBlock
         {
@@ -53,10 +56,28 @@ public static class AuditDashboardCardFactory
             FontSize = 16,
             FontWeight = FontWeights.Bold,
             Foreground = new SolidColorBrush(Color.FromRgb(15, 23, 42)),
-            TextWrapping = TextWrapping.Wrap
+            TextWrapping = TextWrapping.Wrap,
+            VerticalAlignment = VerticalAlignment.Center
         };
-        Grid.SetRow(title, 0);
-        body.Children.Add(title);
+        Grid.SetColumn(title, 0);
+        heading.Children.Add(title);
+
+        var details = new Button
+        {
+            Content = "Détails",
+            MinWidth = 72,
+            Padding = new Thickness(8, 3, 8, 3),
+            Margin = new Thickness(8, 0, 0, 0),
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Top,
+            ToolTip = "Ouvrir le contrôle détaillé"
+        };
+        details.Click += detailsHandler;
+        Grid.SetColumn(details, 1);
+        heading.Children.Add(details);
+
+        Grid.SetRow(heading, 0);
+        body.Children.Add(heading);
 
         var subtitle = new TextBlock
         {
@@ -98,16 +119,6 @@ public static class AuditDashboardCardFactory
         Grid.SetRow(detail, 3);
         body.Children.Add(detail);
 
-        var details = new Button
-        {
-            Content = "Détails",
-            MinWidth = 105,
-            Padding = new Thickness(11, 5, 11, 5),
-            HorizontalAlignment = HorizontalAlignment.Right
-        };
-        details.Click += detailsHandler;
-        Grid.SetRow(details, 4);
-        body.Children.Add(details);
 
         Grid.SetRow(body, 1);
         layout.Children.Add(body);

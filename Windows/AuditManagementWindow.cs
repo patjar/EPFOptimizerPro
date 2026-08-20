@@ -103,7 +103,7 @@ public sealed class AuditManagementWindow : Window
         });
         intro.Children.Add(new TextBlock
         {
-            Text = "V8.2 : lancez tous les contrôles en lecture seule ou utilisez Détails pour un contrôle ciblé.",
+            Text = "Lancez tous les contrôles en lecture seule ou utilisez Détails pour un contrôle ciblé.",
             Margin = new Thickness(0, 3, 0, 0),
             Foreground = new SolidColorBrush(Color.FromRgb(71, 85, 105)),
             TextWrapping = TextWrapping.Wrap
