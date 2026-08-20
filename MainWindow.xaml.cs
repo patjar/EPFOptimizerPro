@@ -793,18 +793,49 @@ private void SetDashboardScore(int score)
             TxtScoreHero.Foreground = UiBrushProvider.FromHex(ScoreColorProvider.Error);
         }
     }
-    private void CompletedTaskItem_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private async void CompletedTaskItem_MouseLeftButtonUp(
+        object sender,
+        System.Windows.Input.MouseButtonEventArgs e)
     {
         e.Handled = true;
 
-        if (sender is not System.Windows.FrameworkElement element)
+        if (sender is not System.Windows.FrameworkElement element ||
+            element.DataContext is not TaskProgressInfo task)
         {
+            return;
+        }
+
+        if (task.Name.Equals("DNS", StringComparison.OrdinalIgnoreCase))
+        {
+            MessageBoxResult answer = MessageBox.Show(
+                this,
+                "Relancer uniquement DNS ?\n\n" +
+                "Le résultat DNS précédent sera remplacé. " +
+                "Les sept autres résultats seront conservés.",
+                "Relance ciblée DNS",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question,
+                MessageBoxResult.No);
+
+            if (answer != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            TxtActionHint.Text = "Relance manuelle DNS en cours...";
+
+            bool completed = await _engine.RunSingleTaskAsync("DNS");
+
+            TxtActionHint.Text = completed
+                ? "Relance manuelle DNS terminée."
+                : "Relance manuelle DNS non exécutée. Consultez le journal.";
+            UpdateDashboardSummary();
             return;
         }
 
         EPFOptimizerPro.Services.CompletedTaskActionLauncher.Show(
             this,
-            element.DataContext,
+            task,
             _engine.CompletedTasks.Cast<object>());
     }
 }
