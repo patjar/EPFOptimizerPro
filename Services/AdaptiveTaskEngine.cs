@@ -264,13 +264,13 @@ public sealed class AdaptiveTaskEngine
 
     private void SetTask(TaskProgressInfo task, string status, int progress, string message, string color)
     {
-        _dispatcher.BeginInvoke(new Action(() =>
+        _dispatcher.Invoke(() =>
         {
             task.Status = status;
             task.Progress = progress;
             task.Message = message;
             task.StatusColor = color;
-        }), DispatcherPriority.Background);
+        });
     }
 
 
@@ -345,6 +345,50 @@ public sealed class AdaptiveTaskEngine
 
         string taskRows = string.Join(string.Empty, Tasks.Select(task =>
             $"<tr><td>{WebUtility.HtmlEncode(task.Name)}</td><td>{WebUtility.HtmlEncode(task.Status)}</td><td>{task.Progress}%</td><td>{WebUtility.HtmlEncode(task.Message)}</td></tr>"));
+        TaskExecutionCycleSummary cycleSummary = CurrentCycleSummary;
+        IReadOnlyList<TaskExecutionMetadata> executionMetadata = ExecutionMetadata;
+
+        string executionMetadataRows = string.Join(string.Empty, executionMetadata
+            .OrderBy(item => item.TaskName, StringComparer.OrdinalIgnoreCase)
+            .Select(item =>
+            {
+                string origin = item.Origin switch
+                {
+                    TaskExecutionOrigin.Optimize => "Optimiser",
+                    TaskExecutionOrigin.ManualRerun => "Relance manuelle",
+                    _ => "Audit"
+                };
+                string disposition = item.Disposition == TaskExecutionDisposition.Reused
+                    ? "Réutilisée"
+                    : "Exécutée";
+                string completedAt = item.CompletedAt?.ToString("dd/MM/yyyy HH:mm:ss") ?? "Non disponible";
+                string duration = item.Duration.HasValue
+                    ? item.Duration.Value.TotalMinutes >= 1
+                        ? $"{(int)item.Duration.Value.TotalMinutes} min {item.Duration.Value.Seconds} s"
+                        : $"{item.Duration.Value.TotalSeconds:0.0} s"
+                    : "Non disponible";
+                string reusedAt = item.ReusedAt?.ToString("dd/MM/yyyy HH:mm:ss") ?? "-";
+
+                return $"<tr><td>{WebUtility.HtmlEncode(item.TaskName)}</td>" +
+                    $"<td>{WebUtility.HtmlEncode(origin)}</td>" +
+                    $"<td>{WebUtility.HtmlEncode(disposition)}</td>" +
+                    $"<td>{WebUtility.HtmlEncode(completedAt)}</td>" +
+                    $"<td>{WebUtility.HtmlEncode(duration)}</td>" +
+                    $"<td>{item.ExecutionCount}</td><td>{item.ReuseCount}</td>" +
+                    $"<td>{WebUtility.HtmlEncode(reusedAt)}</td></tr>";
+            }));
+
+        string executedTaskNames = string.Join("<br>", executionMetadata
+            .Where(item => item.Disposition == TaskExecutionDisposition.Executed)
+            .OrderBy(item => item.TaskName, StringComparer.OrdinalIgnoreCase)
+            .Select(item => WebUtility.HtmlEncode(item.TaskName)));
+        string reusedTaskNames = string.Join("<br>", executionMetadata
+            .Where(item => item.Disposition == TaskExecutionDisposition.Reused)
+            .OrderBy(item => item.TaskName, StringComparer.OrdinalIgnoreCase)
+            .Select(item => WebUtility.HtmlEncode(item.TaskName)));
+
+        if (string.IsNullOrWhiteSpace(executedTaskNames)) executedTaskNames = "Aucune";
+        if (string.IsNullOrWhiteSpace(reusedTaskNames)) reusedTaskNames = "Aucun";
         string logRows = string.Join(string.Empty, Logs.Select(log =>
             $"<tr><td>{log.Time:HH:mm:ss}</td><td>{WebUtility.HtmlEncode(log.Level)}</td><td>{WebUtility.HtmlEncode(log.Step)}</td><td>{WebUtility.HtmlEncode(log.Message)}</td></tr>"));
         string aiRows = string.Join(string.Empty, recommendations.Select(item =>
@@ -354,7 +398,8 @@ public sealed class AdaptiveTaskEngine
         html.AppendLine($"<!DOCTYPE html><html lang=\"fr\"><head><meta charset=\"UTF-8\"><title>EPF Optimizer Pro v{appVersion}</title>");
         html.AppendLine("<style>body{font-family:Segoe UI,Arial;background:#0f172a;color:#e5e7eb;margin:0}.wrap{padding:28px}.card{background:#111827;border:1px solid #334155;border-radius:16px;padding:18px;margin:14px 0}h1{color:#38bdf8}table{width:100%;border-collapse:collapse}th{background:#1e293b;color:#e0f2fe}td,th{padding:8px;border-top:1px solid #334155;vertical-align:top}</style></head><body><div class=\"wrap\">");
         html.AppendLine($"<h1>EPF Optimizer Pro Premium v{appVersion}</h1><p>Score : <b>{score}/100</b> | Workers : <b>{maxWorkers}</b> | CPU initial : {cpuStart:0}% | RAM initiale : {memoryStart:0}%</p>");
-        html.AppendLine("<div class=\"card\"><h2>Tâches indépendantes</h2><table><tr><th>Tâche</th><th>Statut</th><th>Progression</th><th>Message</th></tr>" + taskRows + "</table></div>");
+        html.AppendLine($"<div class=\"card\"><h2>Résumé du cycle courant</h2><p><b>{cycleSummary.ExecutedCount}</b> tâche(s) exécutée(s) · <b>{cycleSummary.ReusedCount}</b> résultat(s) réutilisé(s)</p><table><tr><th>TÂCHES EXÉCUTÉES</th><th>RÉSULTATS RÉUTILISÉS</th></tr><tr><td>{executedTaskNames}</td><td>{reusedTaskNames}</td></tr></table></div>");
+        html.AppendLine("<div class=\"card\"><h2>Métadonnées d'exécution</h2><table><tr><th>Tâche</th><th>Origine</th><th>Disposition</th><th>Dernière exécution</th><th>Durée</th><th>Exécutions</th><th>Réutilisations</th><th>Dernière réutilisation</th></tr>" + executionMetadataRows + "</table></div>");        html.AppendLine("<div class=\"card\"><h2>Tâches indépendantes</h2><table><tr><th>Tâche</th><th>Statut</th><th>Progression</th><th>Message</th></tr>" + taskRows + "</table></div>");
         html.AppendLine("<div class=\"card\"><h2>IA locale</h2><table><tr><th>Niveau</th><th>Sujet</th><th>Détail</th></tr>" + aiRows + "</table></div>");
         html.AppendLine("<div class=\"card\"><h2>Journal</h2><table><tr><th>Heure</th><th>Niveau</th><th>Étape</th><th>Message</th></tr>" + logRows + "</table></div>");
         html.AppendLine("</div></body></html>");
