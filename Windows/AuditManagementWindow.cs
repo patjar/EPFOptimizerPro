@@ -106,6 +106,7 @@ public sealed class AuditManagementWindow : Window
         actions.Children.Add(CreateButton("Copier les infos techniques", 210, (_, _) => CopyDeveloperInfo()));
         actions.Children.Add(CreateButton("Tester le canal de mise à jour", 220, async (_, _) => await TestUpdateChannelAsync()));
         actions.Children.Add(CreateButton("Vérifier la cohérence des versions", 240, (_, _) => CheckVersionConsistency()));
+        actions.Children.Add(CreateButton("Vérifier le dernier MSI", 190, async (_, _) => await CheckMsiSignatureAsync()));
         DockPanel.SetDock(actions, Dock.Top);
         panel.Children.Add(actions);
         panel.Children.Add(_developerText);
@@ -183,6 +184,19 @@ public sealed class AuditManagementWindow : Window
         Clipboard.SetText(_developerText.Text);
     }
 
+    private async Task CheckMsiSignatureAsync()
+    {
+        _developerText.Text = "Vérification du dernier MSI en cours...";
+        try
+        {
+            _developerText.Text = await AuditMsiSignatureService.BuildReportAsync();
+        }
+        catch (Exception ex)
+        {
+            _developerText.Text = "Erreur pendant la vérification du MSI :" +
+                Environment.NewLine + Environment.NewLine + ex.Message;
+        }
+    }
     private void CheckVersionConsistency()
     {
         try
