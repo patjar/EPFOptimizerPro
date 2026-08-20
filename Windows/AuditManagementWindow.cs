@@ -108,6 +108,7 @@ public sealed class AuditManagementWindow : Window
         actions.Children.Add(CreateButton("Vérifier la cohérence des versions", 240, (_, _) => CheckVersionConsistency()));
         actions.Children.Add(CreateButton("Vérifier le dernier MSI", 190, async (_, _) => await CheckMsiSignatureAsync()));
         actions.Children.Add(CreateButton("Vérifier le dépôt Git", 180, (_, _) => CheckGitRepositoryHealth()));
+        actions.Children.Add(CreateButton("Exporter le rapport complet", 220, async (_, _) => await ExportFullAuditReportAsync()));
         DockPanel.SetDock(actions, Dock.Top);
         panel.Children.Add(actions);
         panel.Children.Add(_developerText);
@@ -185,6 +186,39 @@ public sealed class AuditManagementWindow : Window
         Clipboard.SetText(_developerText.Text);
     }
 
+    private async Task ExportFullAuditReportAsync()
+    {
+        _developerText.Text = "Export du rapport complet en cours...";
+
+        try
+        {
+            string path = await AuditFullReportExporter.ExportAsync(
+                _name, _status, _progress, _message, _completedTasks);
+
+            _developerText.Text =
+                "Rapport d'audit complet exporte." + Environment.NewLine + Environment.NewLine +
+                "Chemin : " + path + Environment.NewLine + Environment.NewLine +
+                "Le rapport regroupe le resume, les problemes, les informations developpeur, " +
+                "le code mort, le canal de mise a jour, les versions, le MSI et l'etat Git.";
+
+            MessageBoxResult result = MessageBox.Show(
+                "Le rapport a ete cree :" + Environment.NewLine + Environment.NewLine + path +
+                Environment.NewLine + Environment.NewLine + "Ouvrir le rapport maintenant ?",
+                "Rapport d'audit EPFOptimizerPro",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Information);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                AuditFullReportExporter.OpenReport(path);
+            }
+        }
+        catch (Exception ex)
+        {
+            _developerText.Text = "Erreur pendant l'export du rapport complet :" +
+                Environment.NewLine + Environment.NewLine + ex.Message;
+        }
+    }
     private void CheckGitRepositoryHealth()
     {
         try
