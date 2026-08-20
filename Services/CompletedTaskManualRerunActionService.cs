@@ -18,25 +18,46 @@ public static class CompletedTaskManualRerunActionService
         "Corbeille"
     };
 
+    private static readonly IReadOnlyDictionary<string, string> LongTaskPrompts =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Volumes"] =
+                "Cette opération peut prendre plusieurs minutes et solliciter les volumes de stockage.",
+            ["SFC"] =
+                "Cette analyse peut être longue et solliciter le système jusqu'à sa fin."
+        };
+
     public static async Task<CompletedTaskManualRerunResult> TryRunAsync(
         System.Windows.Window owner,
         TaskProgressInfo task,
         AdaptiveTaskEngine engine)
     {
-        if (!ShortTaskNames.Contains(task.Name))
+        bool isShortTask = ShortTaskNames.Contains(task.Name);
+        bool isLongTask = LongTaskPrompts.TryGetValue(
+            task.Name,
+            out string? longWarning);
+
+        if (!isShortTask && !isLongTask)
         {
             return new(false, false, string.Empty);
         }
 
         string taskName = task.Name;
+        string warning = isLongTask
+            ? longWarning!
+            : "Cette opération est normalement rapide.";
+
         System.Windows.MessageBoxResult answer = System.Windows.MessageBox.Show(
             owner,
             $"Relancer uniquement {taskName} ?\n\n" +
+            warning + "\n\n" +
             $"Le résultat {taskName} précédent sera remplacé. " +
             "Les autres résultats seront conservés.",
             $"Relance ciblée {taskName}",
             System.Windows.MessageBoxButton.YesNo,
-            System.Windows.MessageBoxImage.Question,
+            isLongTask
+                ? System.Windows.MessageBoxImage.Warning
+                : System.Windows.MessageBoxImage.Question,
             System.Windows.MessageBoxResult.No);
 
         if (answer != System.Windows.MessageBoxResult.Yes)
@@ -49,7 +70,7 @@ public static class CompletedTaskManualRerunActionService
 
         bool completed = await engine.RunSingleTaskAsync(taskName);
         return completed
-            ? new(true, true, $"Relance manuelle {taskName} terminée.")
+            ? new(true,true,$"Relance manuelle {taskName} terminée.")
             : new(
                 true,
                 false,
