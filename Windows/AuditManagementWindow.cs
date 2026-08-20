@@ -1,3 +1,4 @@
+using System.IO;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,7 @@ public sealed class AuditManagementWindow : Window
     private readonly TextBox _summaryText;
     private readonly TextBox _problemsText;
     private readonly TextBox _developerText;
+    private readonly TextBox _deadCodeText;
 
     public AuditManagementWindow(
         string name,
@@ -58,12 +60,13 @@ public sealed class AuditManagementWindow : Window
         _summaryText = CreateReadOnlyTextBox();
         _problemsText = CreateReadOnlyTextBox();
         _developerText = CreateReadOnlyTextBox();
+        _deadCodeText = CreateReadOnlyTextBox();
 
         var tabs = new TabControl();
         tabs.Items.Add(CreateTab("Résumé", _summaryText));
         tabs.Items.Add(CreateTab("Problèmes", BuildProblemsPanel()));
         tabs.Items.Add(CreateTab("Développeur", BuildDeveloperPanel()));
-        tabs.Items.Add(CreateTab("Code mort [Expérimental]", CreateDeadCodePanel()));
+        tabs.Items.Add(CreateTab("Code mort [Expérimental]", BuildDeadCodePanel()));
         root.Children.Add(tabs);
 
         Content = root;
@@ -107,11 +110,46 @@ public sealed class AuditManagementWindow : Window
         return panel;
     }
 
-    private static UIElement CreateDeadCodePanel()
+    private UIElement BuildDeadCodePanel()
     {
-        var text = CreateReadOnlyTextBox();
-        text.Text = AuditDeadCodeInfoProvider.Build();
-        return text;
+        var panel = new DockPanel();
+        var actions = new WrapPanel { Margin = new Thickness(0, 0, 0, 8) };
+        actions.Children.Add(CreateButton("Analyser le projet", 170, (_, _) => ScanDeadCode()));
+        actions.Children.Add(CreateButton("Copier les résultats", 180, (_, _) => CopyDeadCodeResults()));
+        DockPanel.SetDock(actions, Dock.Top);
+        panel.Children.Add(actions);
+        _deadCodeText.Text = AuditDeadCodeInfoProvider.Build();
+        panel.Children.Add(_deadCodeText);
+        return panel;
+    }
+
+    private void ScanDeadCode()
+    {
+        string projectRoot = FindProjectRoot();
+        _deadCodeText.Text = AuditDeadCodeScannerService.Scan(projectRoot);
+    }
+
+    private void CopyDeadCodeResults()
+    {
+        Clipboard.SetText(_deadCodeText.Text);
+    }
+
+    private static string FindProjectRoot()
+    {
+        string current = AppContext.BaseDirectory;
+        DirectoryInfo? directory = new DirectoryInfo(current);
+
+        while (directory is not null)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, "EPFOptimizerPro.csproj")))
+            {
+                return directory.FullName;
+            }
+
+            directory = directory.Parent;
+        }
+
+        return Environment.CurrentDirectory;
     }
 
     private void RefreshContent()
