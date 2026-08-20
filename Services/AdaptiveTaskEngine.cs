@@ -107,20 +107,16 @@ public sealed class AdaptiveTaskEngine
 
         _commandTable.Clear();
 
-        AddTaskIfMissing(completedTaskNames, "Audit", "Get-ComputerInfo | Select-Object WindowsProductName, WindowsVersion, OsBuildNumber | Format-List | Out-String", 30);
-        AddTaskIfMissing(completedTaskNames, "Updates", "$session = New-Object -ComObject Microsoft.Update.Session; $searcher = $session.CreateUpdateSearcher(); $result = $searcher.Search('IsInstalled=0 and IsHidden=0'); 'Mises à jour disponibles : ' + $result.Updates.Count", 240);
-
-        if (optimize)
+        foreach (AdaptiveTaskDefinition definition in
+            AdaptiveTaskCatalog.GetDefinitions(optimize))
         {
-            AddTaskIfMissing(completedTaskNames, "Temp User", "Get-ChildItem -Path $env:TEMP -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue", 90);
-            AddTaskIfMissing(completedTaskNames, "Temp Win", "Get-ChildItem -Path 'C:\\Windows\\Temp' -Force -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue", 90);
-            AddTaskIfMissing(completedTaskNames, "Corbeille", "Clear-RecycleBin -Force -ErrorAction SilentlyContinue", 60);
-            AddTaskIfMissing(completedTaskNames, "DNS", "ipconfig /flushdns", 30);
-            AddTaskIfMissing(completedTaskNames, "Volumes", "Get-Volume | Where-Object DriveLetter | ForEach-Object { Optimize-Volume -DriveLetter $_.DriveLetter }", 600);
-            AddTaskIfMissing(completedTaskNames, "SFC", "sfc /scannow", 1200);
+            AddTaskIfMissing(
+                completedTaskNames,
+                definition.Name,
+                definition.Command,
+                definition.TimeoutSeconds);
         }
     }
-
     private void AddTaskIfMissing(
         ISet<string> completedTaskNames,
         string name,
