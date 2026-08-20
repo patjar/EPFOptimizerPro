@@ -17,6 +17,9 @@ public sealed class AdaptiveTaskEngine
 
     public IReadOnlyList<TaskExecutionMetadata> ExecutionMetadata =>
         _executionMetadata.GetSnapshot();
+
+    public TaskExecutionCycleSummary CurrentCycleSummary =>
+        _executionMetadata.GetCurrentCycleSummary();
     private readonly Dispatcher _dispatcher;
     private readonly PowerShellCommandRunner _runner = new();
     private readonly LocalLearningEngine _learning = new();
@@ -82,6 +85,7 @@ public sealed class AdaptiveTaskEngine
         _currentExecutionOrigin = optimize
             ? TaskExecutionOrigin.Optimize
             : TaskExecutionOrigin.Audit;
+        _executionMetadata.BeginCycle();
         ISet<string> completedTaskNames = IncrementalTaskPlanner.CreateCompletedTaskNames(Array.Empty<string>());
 
         _dispatcher.Invoke(() =>

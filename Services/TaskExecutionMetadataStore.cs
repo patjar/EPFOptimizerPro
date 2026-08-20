@@ -18,12 +18,42 @@ public sealed class TaskExecutionMetadataStore
     }
 
     private readonly object _sync = new();
+    private readonly HashSet<string> _cycleExecuted = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> _cycleReused = new(StringComparer.OrdinalIgnoreCase);
+    private DateTimeOffset _cycleStartedAt = DateTimeOffset.Now;
+    private DateTimeOffset? _cycleCompletedAt;
     private readonly Dictionary<string, MutableMetadata> _items =
         new(StringComparer.OrdinalIgnoreCase);
 
     public void Reset()
     {
-        lock (_sync) _items.Clear();
+        lock (_sync)
+        {
+            _items.Clear();
+            BeginCycleCore();
+        }
+    }
+
+    public void BeginCycle()
+    {
+        lock (_sync) BeginCycleCore();
+    }
+
+    public void CompleteCycle()
+    {
+        lock (_sync) _cycleCompletedAt = DateTimeOffset.Now;
+    }
+
+    public TaskExecutionCycleSummary GetCurrentCycleSummary()
+    {
+        lock (_sync)
+        {
+            return new TaskExecutionCycleSummary(
+                _cycleExecuted.Count,
+                _cycleReused.Count,
+                _cycleStartedAt,
+                _cycleCompletedAt);
+        }
     }
 
     public void MarkStarted(string taskName, TaskExecutionOrigin origin)
@@ -38,6 +68,7 @@ public sealed class TaskExecutionMetadataStore
             item.CompletedAt = null;
             item.Duration = null;
             item.ExecutionCount++;
+            _cycleExecuted.Add(taskName);
         }
     }
 
@@ -60,6 +91,7 @@ public sealed class TaskExecutionMetadataStore
             item.Disposition = TaskExecutionDisposition.Reused;
             item.ReusedAt = DateTimeOffset.Now;
             item.ReuseCount++;
+            _cycleReused.Add(taskName);
         }
     }
 
@@ -83,6 +115,13 @@ public sealed class TaskExecutionMetadataStore
         }
     }
 
+    private void BeginCycleCore()
+    {
+        _cycleExecuted.Clear();
+        _cycleReused.Clear();
+        _cycleStartedAt = DateTimeOffset.Now;
+        _cycleCompletedAt = null;
+    }
     private MutableMetadata GetOrCreate(string taskName)
     {
         if (!_items.TryGetValue(taskName, out MutableMetadata? item))

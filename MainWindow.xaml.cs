@@ -205,6 +205,8 @@ public partial class MainWindow : Window
         {
             activeNames = "aucune tâche active";
         }
+        string cycleExecutionSummary =
+            TaskExecutionSummaryProvider.Build(_engine.CurrentCycleSummary);
 
         bool hasActiveVisibleTasks = _engine.ActiveTasks.Any(t =>
             TaskStatusTextProvider.IsRunning(t.Status) ||
@@ -213,7 +215,11 @@ public partial class MainWindow : Window
         TxtNoActiveTasks.Visibility = hasActiveVisibleTasks
             ? Visibility.Collapsed
             : Visibility.Visible;
-        TxtDashboardSummary.Text = DashboardSummaryTextProvider.Format(done, total, running, activeNames, waiting, warn, error);
+        TxtDashboardSummary.Text =
+            DashboardSummaryTextProvider.Format(
+                done, total, running, activeNames, waiting, warn, error) +
+            Environment.NewLine +
+            cycleExecutionSummary;
     }
 
 
