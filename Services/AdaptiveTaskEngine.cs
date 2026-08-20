@@ -1,4 +1,5 @@
 using System.Reflection;
+using EPFOptimizerPro.Services.Models;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -11,6 +12,11 @@ namespace EPFOptimizerPro.Services;
 
 public sealed class AdaptiveTaskEngine
 {
+    private readonly TaskExecutionMetadataStore _executionMetadata = new();
+    private TaskExecutionOrigin _currentExecutionOrigin = TaskExecutionOrigin.Audit;
+
+    public IReadOnlyList<TaskExecutionMetadata> ExecutionMetadata =>
+        _executionMetadata.GetSnapshot();
     private readonly Dispatcher _dispatcher;
     private readonly PowerShellCommandRunner _runner = new();
     private readonly LocalLearningEngine _learning = new();
@@ -73,6 +79,9 @@ public sealed class AdaptiveTaskEngine
 
     private void InitTasks(bool optimize)
     {
+        _currentExecutionOrigin = optimize
+            ? TaskExecutionOrigin.Optimize
+            : TaskExecutionOrigin.Audit;
         ISet<string> completedTaskNames = IncrementalTaskPlanner.CreateCompletedTaskNames(Array.Empty<string>());
 
         _dispatcher.Invoke(() =>
@@ -88,6 +97,7 @@ public sealed class AdaptiveTaskEngine
             else
             {
                 CompletedTasks.Clear();
+                _executionMetadata.Reset();
             }
         });
 
@@ -115,6 +125,7 @@ public sealed class AdaptiveTaskEngine
     {
         if (!IncrementalTaskPlanner.ShouldSchedule(completedTaskNames, name))
         {
+            _executionMetadata.MarkReused(name);
             Log("INFO", name, "Resultat precedent conserve, tache non relancee.");
             return;
         }
@@ -143,6 +154,7 @@ public sealed class AdaptiveTaskEngine
 
     private async Task RunTaskWithSemaphoreAsync(TaskProgressInfo task, SemaphoreSlim semaphore, CancellationToken token)
     {
+        _executionMetadata.MarkStarted(task.Name, _currentExecutionOrigin);
         await semaphore.WaitAsync(token);
         try
         {
@@ -150,6 +162,7 @@ public sealed class AdaptiveTaskEngine
         }
         finally
         {
+            _executionMetadata.MarkCompleted(task.Name);
             semaphore.Release();
         }
     }
