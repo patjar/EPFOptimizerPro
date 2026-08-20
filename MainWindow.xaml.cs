@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Windows.Controls;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -6,6 +7,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using EPFOptimizerPro.Models;
 using EPFOptimizerPro.Services;
+using EPFOptimizerPro.Services.Models;
 
 namespace EPFOptimizerPro;
 
@@ -187,6 +189,88 @@ public partial class MainWindow : Window
         });
     }
 
+    private void CompletedTaskBorder_ToolTipOpening(object sender, System.Windows.Controls.ToolTipEventArgs e)
+    {
+        if (sender is not Border border ||
+            border.DataContext is not TaskProgressInfo task)
+        {
+            return;
+        }
+
+        var metadata = _engine.ExecutionMetadata.FirstOrDefault(item =>
+            item.TaskName.Equals(task.Name, StringComparison.OrdinalIgnoreCase));
+
+        if (metadata is null)
+        {
+            return;
+        }
+
+        string origin = metadata.Origin switch
+        {
+            TaskExecutionOrigin.Optimize => "Optimiser",
+            TaskExecutionOrigin.ManualRerun => "Relance manuelle",
+            _ => "Audit"
+        };
+
+        string duration = metadata.Duration.HasValue
+            ? FormatTaskDuration(metadata.Duration.Value)
+            : "Non disponible";
+
+        var panel = new StackPanel
+        {
+            MaxWidth = 340
+        };
+        panel.Children.Add(new TextBlock
+        {
+            Text = task.Name,
+            FontWeight = FontWeights.Bold
+        });
+        panel.Children.Add(new TextBlock { Text = "Statut : " + task.Status });
+        panel.Children.Add(new TextBlock { Text = "Progression : " + task.Progress + "%" });
+        panel.Children.Add(new TextBlock
+        {
+            Text = task.Message,
+            TextWrapping = TextWrapping.Wrap,
+            Margin = new Thickness(0, 0, 0, 7)
+        });
+        panel.Children.Add(new Separator());
+        panel.Children.Add(new TextBlock { Text = "Origine : " + origin });
+        panel.Children.Add(new TextBlock
+        {
+            Text = "Dernière exécution : " +
+                (metadata.CompletedAt?.ToString("dd/MM/yyyy HH:mm:ss") ?? "Non disponible")
+        });
+        panel.Children.Add(new TextBlock { Text = "Durée : " + duration });
+        panel.Children.Add(new TextBlock
+        {
+            Text = "Exécutions réelles : " + metadata.ExecutionCount
+        });
+        panel.Children.Add(new TextBlock
+        {
+            Text = "Réutilisations : " + metadata.ReuseCount
+        });
+
+        if (metadata.ReusedAt.HasValue)
+        {
+            panel.Children.Add(new TextBlock
+            {
+                Text = "Dernière réutilisation : " +
+                    metadata.ReusedAt.Value.ToString("dd/MM/yyyy HH:mm:ss")
+            });
+        }
+
+        border.ToolTip = panel;
+    }
+
+    private static string FormatTaskDuration(TimeSpan duration)
+    {
+        if (duration.TotalMinutes >= 1)
+        {
+            return $"{(int)duration.TotalMinutes} min {duration.Seconds} s";
+        }
+
+        return $"{duration.TotalSeconds:0.0} s";
+    }
     private void UpdateDashboardSummary()
     {
         int total = _engine.CompletedTasks
