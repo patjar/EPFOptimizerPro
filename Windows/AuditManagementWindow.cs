@@ -22,6 +22,7 @@ public sealed class AuditManagementWindow : Window
     private readonly TextBox _deadCodeText;
     private readonly TabControl _tabs;
     private readonly Dictionary<string, AuditDashboardCardModel> _dashboardModels = new();
+    private readonly Dictionary<string, string> _dashboardReports = new();
     private UniformGrid? _dashboardCards;
     private bool _isDashboardRunning;
     private Border? _dashboardGlobalBanner;
@@ -160,6 +161,7 @@ public sealed class AuditManagementWindow : Window
             {
                 string updateReport = await AuditUpdateChannelDiagnosticService.BuildReportAsync();
                 _developerText.Text = updateReport;
+                _dashboardReports["updates"] = updateReport;
                 SetDashboardModel(AuditDashboardStatusInterpreter.FromUpdateChannel(updateReport));
             }
             catch (Exception ex)
@@ -174,6 +176,7 @@ public sealed class AuditManagementWindow : Window
             {
                 string versionsReport = AuditVersionConsistencyService.BuildReport();
                 _developerText.Text = versionsReport;
+                _dashboardReports["versions"] = versionsReport;
                 SetDashboardModel(AuditDashboardStatusInterpreter.FromVersions(versionsReport));
             }
             catch (Exception ex)
@@ -188,6 +191,7 @@ public sealed class AuditManagementWindow : Window
             {
                 string msiReport = await AuditMsiSignatureService.BuildReportAsync();
                 _developerText.Text = msiReport;
+                _dashboardReports["msi"] = msiReport;
                 SetDashboardModel(AuditDashboardStatusInterpreter.FromMsi(msiReport));
             }
             catch (Exception ex)
@@ -202,6 +206,7 @@ public sealed class AuditManagementWindow : Window
             {
                 string gitReport = AuditGitRepositoryHealthService.BuildReport();
                 _developerText.Text = gitReport;
+                _dashboardReports["git"] = gitReport;
                 SetDashboardModel(AuditDashboardStatusInterpreter.FromGit(gitReport));
             }
             catch (Exception ex)
@@ -216,6 +221,7 @@ public sealed class AuditManagementWindow : Window
             {
                 string deadCodeReport = AuditDeadCodeScannerService.Scan(FindProjectRoot());
                 _deadCodeText.Text = deadCodeReport;
+                _dashboardReports["deadcode"] = deadCodeReport;
                 SetDashboardModel(AuditDashboardStatusInterpreter.FromDeadCode(deadCodeReport));
             }
             catch (Exception ex)
@@ -319,7 +325,80 @@ public sealed class AuditManagementWindow : Window
         if (_dashboardCards is null || !_dashboardModels.TryGetValue(id, out AuditDashboardCardModel? model)) return;
         _dashboardCards.Children.Add(AuditDashboardCardFactory.Create(
             model,
-            (_, _) => _tabs.SelectedIndex = targetTabIndex));
+            (_, _) => OpenDashboardDetails(id, targetTabIndex)));
+    }
+    private void OpenDashboardDetails(string id, int fallbackTabIndex)
+    {
+        if (!_dashboardReports.TryGetValue(id, out string? report) ||
+            string.IsNullOrWhiteSpace(report))
+        {
+            _tabs.SelectedIndex = fallbackTabIndex;
+            return;
+        }
+
+        string title = _dashboardModels.TryGetValue(id, out AuditDashboardCardModel? model)
+            ? model.Title
+            : "Détail du contrôle";
+
+        var window = new AuditDashboardDetailWindow(
+            title,
+            report,
+            () => RefreshSingleDashboardReportAsync(id))
+        {
+            Owner = this
+        };
+        window.ShowDialog();
+    }
+
+    private async Task<string> RefreshSingleDashboardReportAsync(string id)
+    {
+        string report = id switch
+        {
+            "system" => RefreshSystemDashboardReport(),
+            "updates" => await AuditUpdateChannelDiagnosticService.BuildReportAsync(),
+            "versions" => AuditVersionConsistencyService.BuildReport(),
+            "msi" => await AuditMsiSignatureService.BuildReportAsync(),
+            "git" => AuditGitRepositoryHealthService.BuildReport(),
+            "deadcode" => AuditDeadCodeScannerService.Scan(FindProjectRoot()),
+            _ => "Contrôle inconnu."
+        };
+
+        _dashboardReports[id] = report;
+        ApplyDashboardReport(id, report);
+        return report;
+    }
+
+    private string RefreshSystemDashboardReport()
+    {
+        IReadOnlyList<AuditProblemSummary> problems =
+            AuditProblemsFilterService.GetErrors(_completedTasks);
+        string report = AuditManagementSummaryProvider.Build(
+            _name, _status, _progress, _message, problems);
+        SetDashboardModel(AuditDashboardStatusInterpreter.FromSystemAudit(problems.Count));
+        return report;
+    }
+
+    private void ApplyDashboardReport(string id, string report)
+    {
+        switch (id)
+        {
+            case "updates":
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromUpdateChannel(report));
+                break;
+            case "versions":
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromVersions(report));
+                break;
+            case "msi":
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromMsi(report));
+                break;
+            case "git":
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromGit(report));
+                break;
+            case "deadcode":
+                _deadCodeText.Text = report;
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromDeadCode(report));
+                break;
+        }
     }
     private UIElement BuildFooter()
     {
@@ -381,6 +460,7 @@ public sealed class AuditManagementWindow : Window
     {
         string projectRoot = FindProjectRoot();
         _deadCodeText.Text = AuditDeadCodeScannerService.Scan(projectRoot);
+        _dashboardReports["deadcode"] = _deadCodeText.Text;
         SetDashboardModel(AuditDashboardStatusInterpreter.FromDeadCode(_deadCodeText.Text));
     }
 
@@ -483,6 +563,7 @@ public sealed class AuditManagementWindow : Window
         try
         {
             _developerText.Text = AuditGitRepositoryHealthService.BuildReport();
+            _dashboardReports["git"] = _developerText.Text;
             SetDashboardModel(AuditDashboardStatusInterpreter.FromGit(_developerText.Text));
         }
         catch (Exception ex)
@@ -497,6 +578,7 @@ public sealed class AuditManagementWindow : Window
         try
         {
             _developerText.Text = await AuditMsiSignatureService.BuildReportAsync();
+            _dashboardReports["msi"] = _developerText.Text;
             SetDashboardModel(AuditDashboardStatusInterpreter.FromMsi(_developerText.Text));
         }
         catch (Exception ex)
@@ -510,6 +592,7 @@ public sealed class AuditManagementWindow : Window
         try
         {
             _developerText.Text = AuditVersionConsistencyService.BuildReport();
+            _dashboardReports["versions"] = _developerText.Text;
             SetDashboardModel(AuditDashboardStatusInterpreter.FromVersions(_developerText.Text));
         }
         catch (Exception ex)
@@ -525,6 +608,7 @@ public sealed class AuditManagementWindow : Window
         try
         {
             _developerText.Text = await AuditUpdateChannelDiagnosticService.BuildReportAsync();
+            _dashboardReports["updates"] = _developerText.Text;
             SetDashboardModel(AuditDashboardStatusInterpreter.FromUpdateChannel(_developerText.Text));
         }
         catch (Exception ex)
