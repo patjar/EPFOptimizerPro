@@ -105,6 +105,7 @@ public sealed class AuditManagementWindow : Window
         actions.Children.Add(CreateButton("Voir les journaux", 160, (_, _) => OpenLogs()));
         actions.Children.Add(CreateButton("Copier les infos techniques", 210, (_, _) => CopyDeveloperInfo()));
         actions.Children.Add(CreateButton("Tester le canal de mise à jour", 220, async (_, _) => await TestUpdateChannelAsync()));
+        actions.Children.Add(CreateButton("Vérifier la cohérence des versions", 240, (_, _) => CheckVersionConsistency()));
         DockPanel.SetDock(actions, Dock.Top);
         panel.Children.Add(actions);
         panel.Children.Add(_developerText);
@@ -182,6 +183,18 @@ public sealed class AuditManagementWindow : Window
         Clipboard.SetText(_developerText.Text);
     }
 
+    private void CheckVersionConsistency()
+    {
+        try
+        {
+            _developerText.Text = AuditVersionConsistencyService.BuildReport();
+        }
+        catch (Exception ex)
+        {
+            _developerText.Text = "Erreur pendant le contrôle de cohérence des versions :" +
+                Environment.NewLine + Environment.NewLine + ex.Message;
+        }
+    }
     private async Task TestUpdateChannelAsync()
     {
         _developerText.Text = "Diagnostic du canal de mise à jour en cours...";
