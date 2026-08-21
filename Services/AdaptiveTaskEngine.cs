@@ -292,20 +292,14 @@ public sealed class AdaptiveTaskEngine
             string line = string.IsNullOrWhiteSpace(output) ? "Terminé" : FirstLine(output);
 
 
-if (SystemDiskStructuredResultParser.TryParse(
-
+if (AdaptiveTaskStructuredResultParserRouter.TryParse(
         output,
-
-        out AdaptiveTaskStructuredResult? structuredResult) &&
-
+        out AdaptiveTaskStructuredResult? structuredResult,
+        out string? structuredDisplayMessage) &&
     structuredResult is not null)
-
 {
-
     SetStructuredResult(structuredResult);
-
-    line = SystemDiskStructuredResultParser.BuildDisplayMessage(structuredResult);
-
+    line = structuredDisplayMessage ?? structuredResult.Summary;
 }
             if (IsWarning(line))
             {
