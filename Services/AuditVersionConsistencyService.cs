@@ -160,7 +160,7 @@ public static class AuditVersionConsistencyService
 
     private static string ExtractVersion(string value)
     {
-        Match match = Regex.Match(value, @"(?<version>\d+\.\d+\.\d+(?:\.\d+)?)");
+        Match match = Regex.Match(value, @"(?<version>\d+\.\d+(?:\.\d+){0,2})");
         return match.Success ? match.Groups["version"].Value : string.Empty;
     }
 
@@ -175,7 +175,8 @@ public static class AuditVersionConsistencyService
     private static string Normalize(string value)
     {
         if (!Version.TryParse(ExtractVersion(value), out Version? version)) return string.Empty;
-        return $"{version.Major}.{version.Minor}.{version.Build}";
+        int build = version.Build >= 0 ? version.Build : 0;
+        return $"{version.Major}.{version.Minor}.{build}";
     }
 
     private static string RunGit(string workingDirectory, string arguments)
