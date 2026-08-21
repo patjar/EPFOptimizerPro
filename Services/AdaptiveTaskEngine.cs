@@ -13,10 +13,16 @@ namespace EPFOptimizerPro.Services;
 public sealed class AdaptiveTaskEngine
 {
     private readonly TaskExecutionMetadataStore _executionMetadata = new();
+    private readonly AdaptiveTaskStructuredResultStore _structuredResults = new();
     private TaskExecutionOrigin _currentExecutionOrigin = TaskExecutionOrigin.Audit;
 
     public IReadOnlyList<TaskExecutionMetadata> ExecutionMetadata =>
         _executionMetadata.GetSnapshot();
+
+
+public IReadOnlyList<AdaptiveTaskStructuredResult> StructuredResults =>
+
+    _structuredResults.GetSnapshot();
 
     public TaskExecutionCycleSummary CurrentCycleSummary =>
         _executionMetadata.GetCurrentCycleSummary();
@@ -47,6 +53,7 @@ public sealed class AdaptiveTaskEngine
     public string LearningFilePath => _learning.LearningFilePath;
     public IReadOnlyList<AiRecommendation> CurrentRecommendations => _learning.Recommend();
 
+    internal void SetStructuredResult(AdaptiveTaskStructuredResult result)     {         _structuredResults.Set(result);     }      internal bool RemoveStructuredResult(string taskName)     {         return _structuredResults.Remove(taskName);     }      internal void ClearStructuredResults()     {         _structuredResults.Clear();     }
     public async Task<string> RunAsync(bool optimize, CancellationToken token, double cpuStart, double memoryStart)
     {
         Logs.Clear();
