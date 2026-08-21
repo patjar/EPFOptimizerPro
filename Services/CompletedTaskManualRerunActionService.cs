@@ -25,21 +25,21 @@ public static class CompletedTaskManualRerunActionService
         }
 
         string taskName = definition.Name;
-        bool isLongTask =
-            definition.DurationKind == AdaptiveTaskDurationKind.Long;
-        string warning = BuildWarning(definition);
+
+        if (!definition.RequiresConfirmation)
+        {
+            return new(
+                true,
+                false,
+                $"Relance manuelle {taskName} bloquée : confirmation non configurée dans le catalogue.");
+        }
 
         System.Windows.MessageBoxResult answer = System.Windows.MessageBox.Show(
             owner,
-            $"Relancer uniquement {taskName} ?\n\n" +
-            warning + "\n\n" +
-            $"Le résultat {taskName} précédent sera remplacé. " +
-            "Les autres résultats seront conservés.",
+            BuildConfirmationMessage(definition),
             $"Relance ciblée {taskName}",
             System.Windows.MessageBoxButton.YesNo,
-            isLongTask
-                ? System.Windows.MessageBoxImage.Warning
-                : System.Windows.MessageBoxImage.Question,
+            GetConfirmationIcon(definition),
             System.Windows.MessageBoxResult.No);
 
         if (answer != System.Windows.MessageBoxResult.Yes)
@@ -59,7 +59,23 @@ public static class CompletedTaskManualRerunActionService
                 $"Relance manuelle {taskName} non exécutée. Consultez le journal.");
     }
 
-    private static string BuildWarning(AdaptiveTaskDefinition definition)
+    private static string BuildConfirmationMessage(
+        AdaptiveTaskDefinition definition)
+    {
+        string description = string.IsNullOrWhiteSpace(definition.Description)
+            ? "Action ciblée du catalogue."
+            : definition.Description;
+
+        return $"Relancer uniquement {definition.Name} ?\n\n" +
+            $"Action : {description}\n" +
+            $"Niveau de risque : {GetRiskLabel(definition.RiskLevel)}\n\n" +
+            BuildDurationWarning(definition) + "\n\n" +
+            $"Le résultat {definition.Name} précédent sera remplacé. " +
+            "Les autres résultats seront conservés.";
+    }
+
+    private static string BuildDurationWarning(
+        AdaptiveTaskDefinition definition)
     {
         if (definition.DurationKind != AdaptiveTaskDurationKind.Long)
         {
@@ -69,5 +85,26 @@ public static class CompletedTaskManualRerunActionService
         return definition.Category == AdaptiveTaskCategory.Maintenance
             ? "Cette opération peut prendre plusieurs minutes et solliciter les volumes de stockage."
             : "Cette analyse peut être longue et solliciter le système jusqu'à sa fin.";
+    }
+
+    private static string GetRiskLabel(AdaptiveTaskRiskLevel riskLevel)
+    {
+        return riskLevel switch
+        {
+            AdaptiveTaskRiskLevel.None => "Aucun",
+            AdaptiveTaskRiskLevel.Low => "Faible",
+            AdaptiveTaskRiskLevel.Medium => "Moyen",
+            AdaptiveTaskRiskLevel.High => "Élevé",
+            _ => "Non défini"
+        };
+    }
+
+    private static System.Windows.MessageBoxImage GetConfirmationIcon(
+        AdaptiveTaskDefinition definition)
+    {
+        return definition.DurationKind == AdaptiveTaskDurationKind.Long ||
+               definition.RiskLevel >= AdaptiveTaskRiskLevel.Medium
+            ? System.Windows.MessageBoxImage.Warning
+            : System.Windows.MessageBoxImage.Question;
     }
 }
