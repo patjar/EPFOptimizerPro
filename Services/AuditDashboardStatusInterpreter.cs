@@ -36,6 +36,12 @@ public static class AuditDashboardStatusInterpreter
             : Error("msi", "MSI et signature", "Authenticode et préparation publication", "Attention requise", ReadVerdict(report));
     }
 
+    public static AuditDashboardCardModel FromWindowsCertificate(string report)
+    {
+        return Contains(report, "VERDICT : CERTIFICAT INSTALLE ET VALIDE")
+            ? Success("certificate", "Certificat Windows", "Présence du certificat de confiance", "Installé", "PROD_CLEARPASS présent et valide")
+            : Error("certificate", "Certificat Windows", "Présence du certificat de confiance", "Non installé", ReadVerdict(report));
+    }
     public static AuditDashboardCardModel FromGit(string report)
     {
         if (Contains(report, "VERDICT : DEPOT PROPRE ET SYNCHRONISE"))

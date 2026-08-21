@@ -201,6 +201,21 @@ public sealed class AuditManagementWindow : Window
             }
 
             SetDashboardModel(AuditDashboardStatusInterpreter.Running(
+                "certificate", "Certificat Windows", "Présence du certificat de confiance"));
+            try
+            {
+                string certificateReport = AuditWindowsCertificateStoreService.BuildReport();
+                _developerText.Text = certificateReport;
+                _dashboardReports["certificate"] = certificateReport;
+                SetDashboardModel(AuditDashboardStatusInterpreter.FromWindowsCertificate(certificateReport));
+            }
+            catch (Exception ex)
+            {
+                SetDashboardModel(AuditDashboardStatusInterpreter.Failed(
+                    "certificate", "Certificat Windows", "Présence du certificat de confiance", ex.Message));
+            }
+
+            SetDashboardModel(AuditDashboardStatusInterpreter.Running(
                 "git", "Dépôt Git", "Branche, synchronisation et working tree"));
             try
             {
@@ -295,6 +310,7 @@ public sealed class AuditManagementWindow : Window
             "versions", "Versions", "Projet, assembly, EXE et MSI");
         _dashboardModels["msi"] = AuditDashboardStatusInterpreter.NotRun(
             "msi", "MSI et signature", "Authenticode et préparation publication");
+        _dashboardModels["certificate"] = AuditDashboardStatusInterpreter.NotRun(             "certificate", "Certificat Windows", "Présence du certificat de confiance");
         _dashboardModels["git"] = AuditDashboardStatusInterpreter.NotRun(
             "git", "Dépôt Git", "Branche, synchronisation et working tree");
         _dashboardModels["deadcode"] = AuditDashboardStatusInterpreter.NotRun(
@@ -315,6 +331,7 @@ public sealed class AuditManagementWindow : Window
         AddDashboardCard("updates", 3);
         AddDashboardCard("versions", 3);
         AddDashboardCard("msi", 3);
+        AddDashboardCard("certificate", 3);
         AddDashboardCard("git", 3);
         AddDashboardCard("deadcode", 4);
         UpdateDashboardGlobalVerdict();
@@ -358,6 +375,7 @@ public sealed class AuditManagementWindow : Window
             "updates" => await AuditUpdateChannelDiagnosticService.BuildReportAsync(),
             "versions" => AuditVersionConsistencyService.BuildReport(),
             "msi" => await AuditMsiSignatureService.BuildReportAsync(),
+            "certificate" => AuditWindowsCertificateStoreService.BuildReport(),
             "git" => AuditGitRepositoryHealthService.BuildReport(),
             "deadcode" => AuditDeadCodeScannerService.Scan(FindProjectRoot()),
             _ => "Contrôle inconnu."
@@ -391,6 +409,7 @@ public sealed class AuditManagementWindow : Window
             case "msi":
                 SetDashboardModel(AuditDashboardStatusInterpreter.FromMsi(report));
                 break;
+            case "certificate":                 SetDashboardModel(AuditDashboardStatusInterpreter.FromWindowsCertificate(report));                 break;
             case "git":
                 SetDashboardModel(AuditDashboardStatusInterpreter.FromGit(report));
                 break;
