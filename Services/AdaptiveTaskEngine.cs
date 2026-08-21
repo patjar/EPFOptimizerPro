@@ -290,6 +290,23 @@ public sealed class AdaptiveTaskEngine
         {
             string output = await commandTask;
             string line = string.IsNullOrWhiteSpace(output) ? "Terminé" : FirstLine(output);
+
+
+if (SystemDiskStructuredResultParser.TryParse(
+
+        output,
+
+        out AdaptiveTaskStructuredResult? structuredResult) &&
+
+    structuredResult is not null)
+
+{
+
+    SetStructuredResult(structuredResult);
+
+    line = SystemDiskStructuredResultParser.BuildDisplayMessage(structuredResult);
+
+}
             if (IsWarning(line))
             {
                 SetTask(task, "Avertissement", 100, FriendlyWarning(line), "#F59E0B");
@@ -336,6 +353,7 @@ public sealed class AdaptiveTaskEngine
         {
             "Audit" => "🔎",
             "Updates" => "⬆",
+            "Espace disque système" => "💾",
             "Temp User" => "🗑",
             "Temp Win" => "🧹",
             "Corbeille" => "♻",
