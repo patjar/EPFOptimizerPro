@@ -50,16 +50,11 @@ public sealed class TaskProgressInfo : INotifyPropertyChanged
         set => SetField(ref _progress, Math.Clamp(value, 0, 100));
     }
 
-
-public AdaptiveTaskHaloKind HaloKind
-
-{
-
-    get => _haloKind;
-
-    set => SetField(ref _haloKind, value);
-
-}
+    public AdaptiveTaskHaloKind HaloKind
+    {
+        get => _haloKind;
+        set => SetField(ref _haloKind, value);
+    }
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
