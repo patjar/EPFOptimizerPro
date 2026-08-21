@@ -26,6 +26,13 @@ public static class AdaptiveTaskStructuredResultParserRouter
             return true;
         }
 
+        if (DismCheckHealthStructuredResultParser.TryParse(output, out result) &&
+            result is not null)
+        {
+            displayMessage = DismCheckHealthStructuredResultParser.BuildDisplayMessage(result);
+            return true;
+        }
+
         return false;
     }
 }
