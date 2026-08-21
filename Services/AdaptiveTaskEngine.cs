@@ -19,10 +19,8 @@ public sealed class AdaptiveTaskEngine
     public IReadOnlyList<TaskExecutionMetadata> ExecutionMetadata =>
         _executionMetadata.GetSnapshot();
 
-
-public IReadOnlyList<AdaptiveTaskStructuredResult> StructuredResults =>
-
-    _structuredResults.GetSnapshot();
+    public IReadOnlyList<AdaptiveTaskStructuredResult> StructuredResults =>
+        _structuredResults.GetSnapshot();
 
     public TaskExecutionCycleSummary CurrentCycleSummary =>
         _executionMetadata.GetCurrentCycleSummary();
@@ -53,7 +51,21 @@ public IReadOnlyList<AdaptiveTaskStructuredResult> StructuredResults =>
     public string LearningFilePath => _learning.LearningFilePath;
     public IReadOnlyList<AiRecommendation> CurrentRecommendations => _learning.Recommend();
 
-    internal void SetStructuredResult(AdaptiveTaskStructuredResult result)     {         _structuredResults.Set(result);     }      internal bool RemoveStructuredResult(string taskName)     {         return _structuredResults.Remove(taskName);     }      internal void ClearStructuredResults()     {         _structuredResults.Clear();     }
+    internal void SetStructuredResult(AdaptiveTaskStructuredResult result)
+    {
+        _structuredResults.Set(result);
+    }
+
+    internal bool RemoveStructuredResult(string taskName)
+    {
+        return _structuredResults.Remove(taskName);
+    }
+
+    internal void ClearStructuredResults()
+    {
+        _structuredResults.Clear();
+    }
+
     public async Task<string> RunAsync(bool optimize, CancellationToken token, double cpuStart, double memoryStart)
     {
         Logs.Clear();
@@ -205,7 +217,16 @@ public IReadOnlyList<AdaptiveTaskStructuredResult> StructuredResults =>
 
         AddTask(name, command, timeoutSeconds);
     }
-    private static AdaptiveTaskHaloKind HaloKindForTask(string taskName)     {         return AdaptiveTaskCatalog.TryGetDefinition(                 taskName,                 out AdaptiveTaskDefinition? definition) &&             definition is not null             ? definition.HaloKind             : AdaptiveTaskHaloKind.None;     }
+    private static AdaptiveTaskHaloKind HaloKindForTask(string taskName)
+    {
+        return AdaptiveTaskCatalog.TryGetDefinition(
+                taskName,
+                out AdaptiveTaskDefinition? definition) &&
+            definition is not null
+            ? definition.HaloKind
+            : AdaptiveTaskHaloKind.None;
+    }
+
     private void AddTask(string name, string command, int timeoutSeconds)
     {
         var item = new TaskProgressInfo
