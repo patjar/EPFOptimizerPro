@@ -19,6 +19,13 @@ public static class AdaptiveTaskStructuredResultParserRouter
             return true;
         }
 
+        if (PendingRestartStructuredResultParser.TryParse(output, out result) &&
+            result is not null)
+        {
+            displayMessage = PendingRestartStructuredResultParser.BuildDisplayMessage(result);
+            return true;
+        }
+
         return false;
     }
 }
