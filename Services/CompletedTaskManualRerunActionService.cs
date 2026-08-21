@@ -1,4 +1,5 @@
 using EPFOptimizerPro.Models;
+using EPFOptimizerPro.Services.Models;
 
 namespace EPFOptimizerPro.Services;
 
@@ -9,43 +10,24 @@ public sealed record CompletedTaskManualRerunResult(
 
 public static class CompletedTaskManualRerunActionService
 {
-    private static readonly HashSet<string> ShortTaskNames = new(
-        StringComparer.OrdinalIgnoreCase)
-    {
-        "DNS",
-        "Temp User",
-        "Temp Win",
-        "Corbeille"
-    };
-
-    private static readonly IReadOnlyDictionary<string, string> LongTaskPrompts =
-        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-        {
-            ["Volumes"] =
-                "Cette opération peut prendre plusieurs minutes et solliciter les volumes de stockage.",
-            ["SFC"] =
-                "Cette analyse peut être longue et solliciter le système jusqu'à sa fin."
-        };
-
     public static async Task<CompletedTaskManualRerunResult> TryRunAsync(
         System.Windows.Window owner,
         TaskProgressInfo task,
         AdaptiveTaskEngine engine)
     {
-        bool isShortTask = ShortTaskNames.Contains(task.Name);
-        bool isLongTask = LongTaskPrompts.TryGetValue(
-            task.Name,
-            out string? longWarning);
-
-        if (!isShortTask && !isLongTask)
+        if (!AdaptiveTaskCatalog.TryGetDefinition(
+                task.Name,
+                out AdaptiveTaskDefinition? definition) ||
+            definition is null ||
+            !definition.CanManualRerun)
         {
             return new(false, false, string.Empty);
         }
 
-        string taskName = task.Name;
-        string warning = isLongTask
-            ? longWarning!
-            : "Cette opération est normalement rapide.";
+        string taskName = definition.Name;
+        bool isLongTask =
+            definition.DurationKind == AdaptiveTaskDurationKind.Long;
+        string warning = BuildWarning(definition);
 
         System.Windows.MessageBoxResult answer = System.Windows.MessageBox.Show(
             owner,
@@ -70,10 +52,22 @@ public static class CompletedTaskManualRerunActionService
 
         bool completed = await engine.RunSingleTaskAsync(taskName);
         return completed
-            ? new(true,true,$"Relance manuelle {taskName} terminée.")
+            ? new(true, true, $"Relance manuelle {taskName} terminée.")
             : new(
                 true,
                 false,
                 $"Relance manuelle {taskName} non exécutée. Consultez le journal.");
+    }
+
+    private static string BuildWarning(AdaptiveTaskDefinition definition)
+    {
+        if (definition.DurationKind != AdaptiveTaskDurationKind.Long)
+        {
+            return "Cette opération est normalement rapide.";
+        }
+
+        return definition.Category == AdaptiveTaskCategory.Maintenance
+            ? "Cette opération peut prendre plusieurs minutes et solliciter les volumes de stockage."
+            : "Cette analyse peut être longue et solliciter le système jusqu'à sa fin.";
     }
 }
