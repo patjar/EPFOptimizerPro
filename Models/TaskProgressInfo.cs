@@ -1,5 +1,6 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using EPFOptimizerPro.Services.Models;
 
 namespace EPFOptimizerPro.Models;
 
@@ -11,6 +12,7 @@ public sealed class TaskProgressInfo : INotifyPropertyChanged
     private string _message = string.Empty;
     private string _statusColor = "#94A3B8";
     private int _progress;
+    private AdaptiveTaskHaloKind _haloKind = AdaptiveTaskHaloKind.None;
 
     public string Name
     {
@@ -47,6 +49,17 @@ public sealed class TaskProgressInfo : INotifyPropertyChanged
         get => _progress;
         set => SetField(ref _progress, Math.Clamp(value, 0, 100));
     }
+
+
+public AdaptiveTaskHaloKind HaloKind
+
+{
+
+    get => _haloKind;
+
+    set => SetField(ref _haloKind, value);
+
+}
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

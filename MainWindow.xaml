@@ -648,105 +648,32 @@
                                                         <MultiDataTrigger.ExitActions>
                                                             <StopStoryboard BeginStoryboardName="AuditHaloRedWarningEnStoryboard"/>
                                                         </MultiDataTrigger.ExitActions>
-                                                    </MultiDataTrigger>                                        <DataTrigger Binding="{Binding Name}" Value="DNS">
+                                                    </MultiDataTrigger>                                        <DataTrigger Binding="{Binding HaloKind}" Value="Orange">
                                             <DataTrigger.EnterActions>
-                                                <BeginStoryboard x:Name="ShortTaskOrangeDnsStoryboard">
+                                                <BeginStoryboard x:Name="CatalogOrangeHaloStoryboard">
                                                     <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
-                                                                         From="4" To="18" Duration="0:0:0.9"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
-                                                                         From="0.25" To="0.90" Duration="0:0:0.9"/>
-                                                        <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
-                                                                        To="#F59E0B" Duration="0:0:0.1"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)" From="4" To="18" Duration="0:0:0.9"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)" From="0.25" To="0.90" Duration="0:0:0.9"/>
+                                                        <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)" To="#F59E0B" Duration="0:0:0.1"/>
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </DataTrigger.EnterActions>
                                             <DataTrigger.ExitActions>
-                                                <StopStoryboard BeginStoryboardName="ShortTaskOrangeDnsStoryboard"/>
+                                                <StopStoryboard BeginStoryboardName="CatalogOrangeHaloStoryboard"/>
                                             </DataTrigger.ExitActions>
                                         </DataTrigger>
-                                        <DataTrigger Binding="{Binding Name}" Value="Temp User">
+                                        <DataTrigger Binding="{Binding HaloKind}" Value="Violet">
                                             <DataTrigger.EnterActions>
-                                                <BeginStoryboard x:Name="ShortTaskOrangeTempUserStoryboard">
+                                                <BeginStoryboard x:Name="CatalogVioletHaloStoryboard">
                                                     <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
-                                                                         From="4" To="18" Duration="0:0:0.9"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
-                                                                         From="0.25" To="0.90" Duration="0:0:0.9"/>
-                                                        <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
-                                                                        To="#F59E0B" Duration="0:0:0.1"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)" From="4" To="20" Duration="0:0:1.15"/>
+                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)" From="0.20" To="0.85" Duration="0:0:1.15"/>
+                                                        <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)" To="#8B5CF6" Duration="0:0:0.1"/>
                                                     </Storyboard>
                                                 </BeginStoryboard>
                                             </DataTrigger.EnterActions>
                                             <DataTrigger.ExitActions>
-                                                <StopStoryboard BeginStoryboardName="ShortTaskOrangeTempUserStoryboard"/>
-                                            </DataTrigger.ExitActions>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Name}" Value="Temp Win">
-                                            <DataTrigger.EnterActions>
-                                                <BeginStoryboard x:Name="ShortTaskOrangeTempWinStoryboard">
-                                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
-                                                                         From="4" To="18" Duration="0:0:0.9"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
-                                                                         From="0.25" To="0.90" Duration="0:0:0.9"/>
-                                                        <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
-                                                                        To="#F59E0B" Duration="0:0:0.1"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.EnterActions>
-                                            <DataTrigger.ExitActions>
-                                                <StopStoryboard BeginStoryboardName="ShortTaskOrangeTempWinStoryboard"/>
-                                            </DataTrigger.ExitActions>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Name}" Value="Corbeille">
-                                            <DataTrigger.EnterActions>
-                                                <BeginStoryboard x:Name="ShortTaskOrangeRecycleBinStoryboard">
-                                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
-                                                                         From="4" To="18" Duration="0:0:0.9"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
-                                                                         From="0.25" To="0.90" Duration="0:0:0.9"/>
-                                                        <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
-                                                                        To="#F59E0B" Duration="0:0:0.1"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.EnterActions>
-                                            <DataTrigger.ExitActions>
-                                                <StopStoryboard BeginStoryboardName="ShortTaskOrangeRecycleBinStoryboard"/>
-                                            </DataTrigger.ExitActions>
-                                        </DataTrigger>                                        <DataTrigger Binding="{Binding Name}" Value="Volumes">
-                                            <DataTrigger.EnterActions>
-                                                <BeginStoryboard x:Name="LongTaskVioletVolumesStoryboard">
-                                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
-                                                                         From="4" To="20" Duration="0:0:1.15"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
-                                                                         From="0.20" To="0.85" Duration="0:0:1.15"/>
-                                                        <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
-                                                                        To="#8B5CF6" Duration="0:0:0.1"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.EnterActions>
-                                            <DataTrigger.ExitActions>
-                                                <StopStoryboard BeginStoryboardName="LongTaskVioletVolumesStoryboard"/>
-                                            </DataTrigger.ExitActions>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Name}" Value="SFC">
-                                            <DataTrigger.EnterActions>
-                                                <BeginStoryboard x:Name="LongTaskVioletSfcStoryboard">
-                                                    <Storyboard RepeatBehavior="Forever" AutoReverse="True">
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.BlurRadius)"
-                                                                         From="4" To="20" Duration="0:0:1.15"/>
-                                                        <DoubleAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Opacity)"
-                                                                         From="0.20" To="0.85" Duration="0:0:1.15"/>
-                                                        <ColorAnimation Storyboard.TargetProperty="(Border.Effect).(DropShadowEffect.Color)"
-                                                                        To="#8B5CF6" Duration="0:0:0.1"/>
-                                                    </Storyboard>
-                                                </BeginStoryboard>
-                                            </DataTrigger.EnterActions>
-                                            <DataTrigger.ExitActions>
-                                                <StopStoryboard BeginStoryboardName="LongTaskVioletSfcStoryboard"/>
+                                                <StopStoryboard BeginStoryboardName="CatalogVioletHaloStoryboard"/>
                                             </DataTrigger.ExitActions>
                                         </DataTrigger></Style.Triggers>
                                 </Style>

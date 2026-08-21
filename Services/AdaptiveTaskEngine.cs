@@ -198,12 +198,14 @@ public sealed class AdaptiveTaskEngine
 
         AddTask(name, command, timeoutSeconds);
     }
+    private static AdaptiveTaskHaloKind HaloKindForTask(string taskName)     {         return AdaptiveTaskCatalog.TryGetDefinition(                 taskName,                 out AdaptiveTaskDefinition? definition) &&             definition is not null             ? definition.HaloKind             : AdaptiveTaskHaloKind.None;     }
     private void AddTask(string name, string command, int timeoutSeconds)
     {
         var item = new TaskProgressInfo
         {
             Name = name,
             Icon = IconForTask(name),
+            HaloKind = HaloKindForTask(name),
             Status = "En attente",
             Message = "En attente d'exécution",
             Progress = 0,
