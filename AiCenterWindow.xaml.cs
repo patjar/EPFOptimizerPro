@@ -1,10 +1,13 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Windows;
 
+
+using EPFOptimizerPro.Services;
+using EPFOptimizerPro.Services.Models;
 namespace EPFOptimizerPro;
 
 public partial class AiCenterWindow : Window
@@ -14,8 +17,13 @@ public partial class AiCenterWindow : Window
     private readonly string _learningFile;
     private readonly string _summaryFile;
 
-    public AiCenterWindow()
+
+    private readonly IReadOnlyList<AdaptiveTaskStructuredResult> _structuredResults;
+    public AiCenterWindow(
+        IReadOnlyList<AdaptiveTaskStructuredResult>? structuredResults = null)
     {
+        _structuredResults = structuredResults?.ToList()
+            ?? new List<AdaptiveTaskStructuredResult>();
         InitializeComponent();
 
         _folder = Path.Combine(
@@ -54,8 +62,8 @@ public partial class AiCenterWindow : Window
         string htmlSummary = BuildHtmlSummary(memory);
 
         File.WriteAllText(_summaryFile, htmlSummary, Encoding.UTF8);
-        TxtSummary.Text = plainSummary;
-
+        TxtSummary.Text = plainSummary + Environment.NewLine +
+            AdaptiveTaskStructuredResultTextFormatter.Format(_structuredResults);
         TxtFiles.Text =
             "Dossier memoire : " + _folder + Environment.NewLine +
             "Historique IA : " + _historyFile + Environment.NewLine +

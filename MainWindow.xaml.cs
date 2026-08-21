@@ -442,7 +442,7 @@ public partial class MainWindow : Window
         TxtScoreHero.Foreground = score >= 85 ? UiBrushProvider.FromHex(ScoreColorProvider.Good) : score >= 65 ? UiBrushProvider.FromHex(ScoreColorProvider.Warning) : UiBrushProvider.FromHex(ScoreColorProvider.Error);
     }
 
-    
+
     private void ApplyDynamicAppVersion()
     {
         string displayName = ApplicationTitleProvider.CurrentTitle();
@@ -509,8 +509,7 @@ private void BtnCancel_Click(object sender, RoutedEventArgs e)
 
                 private void BtnOpenLearning_Click(object sender, RoutedEventArgs e)
     {
-        var window = new AiCenterWindow
-        {
+        var window = new AiCenterWindow(_engine.StructuredResults){
             Owner = this
         };
 
