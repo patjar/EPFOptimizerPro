@@ -347,7 +347,9 @@ if (AdaptiveTaskStructuredResultParserRouter.TryParse(
         {
             "Audit" => "🔎",
             "Updates" => "⬆",
-            "Espace disque système" => "💾",
+            "Espace disque syst\u00E8me" => "\U0001F4BE",
+            "Red\u00E9marrage en attente" => "\u21BB",
+            "DISM CheckHealth" => "\u2695",
             "Temp User" => "🗑",
             "Temp Win" => "🧹",
             "Corbeille" => "♻",
