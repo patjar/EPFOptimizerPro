@@ -1,4 +1,4 @@
-﻿# EPFOptimizerPro - Contexte Copilot
+# EPFOptimizerPro - Contexte Copilot
 
 Derniere version stable connue : **v3.9.97 stable**
 Depot GitHub : https://github.com/patjar/EPFOptimizerPro.git
@@ -135,3 +135,21 @@ Copier-coller ceci dans une nouvelle conversation :
 ```text
 On reprend EPFOptimizerPro. Lis et respecte docs\COPILOT_CONTEXT.md. Mode combat : une seule etape ou un seul script a la fois. Derniere stable connue : v3.9.97. Avant toute modification, demande ou analyse git status --short et build Release.
 ```
+## Synchronisation lors d'un changement d'ordinateur
+
+Un script PowerShell dedie existe pour mettre a jour ou cloner le depot local lorsque Patrick change d'ordinateur de travail :
+
+```text
+Update-EPFOptimizerPro-GitLocal-WorkstationSwitch-v1.0.ps1
+```
+
+Regle importante pour Copilot :
+- proposer ce script telechargeable plutot qu'une simple liste de commandes Git ;
+- conserver exactement son nom explicite ;
+- le script cible par defaut `Documents\EPFOptimizerPro-Clean` ;
+- il clone le depot s'il est absent ;
+- il refuse la synchronisation si des changements locaux non committes existent ;
+- il utilise `fetch --prune`, `switch main` et `pull --ff-only` ;
+- il verifie que le depot local est propre et synchronise avec `origin/main` ;
+- il ne doit jamais executer `reset --hard` ni ecraser automatiquement des changements locaux ;
+- apres synchronisation, valider avec `dotnet build .\EPFOptimizerPro.csproj -c Release`.
